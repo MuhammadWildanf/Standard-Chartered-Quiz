@@ -1,11 +1,14 @@
-const cors = require('cors')
-const express = require('express')
-const bodyParser = require('body-parser');
-const path = require('path');
-const app = express();
-const WebSocket = require('ws');
+import express from 'express'
+import bodyParser from 'body-parser'
+import ClientRouter from "./routes/clientRoute.js"
+import MasterRouter from "./routes/masterRoute.js"
+import { WebSocketServer } from "ws";
 
-const server = new WebSocket.Server({ port: 8080 });
+const app = express();
+
+const server = new WebSocketServer({ port: 8080 });
+
+app.use(express.static('views'))
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
@@ -28,17 +31,10 @@ server.on('connection', (ws) => {
 
 console.log('WebSocket server running on ws://localhost:8080');
 
-// admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccount),
-//     databaseURL: 'https://infocomm-bangkok-default-rtdb.asia-southeast1.firebasedatabase.app'
-//   });
+app.use(ClientRouter)
+app.use(MasterRouter)
 
-app.use(express.static(path.join(__dirname, 'views')));
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'index.html'));
-});
 app.use(express.json())
 
 app.use(bodyParser.json());
 
-app.use(cors({ origin: true }));
