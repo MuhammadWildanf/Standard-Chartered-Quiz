@@ -5,9 +5,35 @@
     <button type="button" class="btn btn-primary" onclick="startQuiz()">
       Start Quiz!
     </button>
+
+    <div>
+      <h2>List Team</h2>
+      <ul id="list-tim">
+
+      </ul>
+    </div>
+
   </div>
 </main>
 
-<script src="js/script.js"></script>
+<script>
+  const socket = io('http://localhost:3000', {
+      query: {
+          userId: 'admin123',  // ID tetap
+          role: 'admin'
+      }
+  });
+
+  socket.on('TeamJoined', (namatim) => {
+    console.log(namatim)
+    const li = document.createElement("li")
+    li.textContent = namatim
+    document.getElementById("list-tim").appendChild(li)
+  })
+
+  const startQuiz = () => {
+      socket.emit('startQuiz')
+  }
+</script>
 
 <%- include('../partials/footer') %>

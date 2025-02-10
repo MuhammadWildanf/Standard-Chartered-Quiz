@@ -4,8 +4,10 @@ import express from 'express'
 import http from 'http'
 import { Server } from 'socket.io'
 import cors from "cors"
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from 'path'
+import bodyParser from 'body-parser';
+import { fileURLToPath } from 'url'
+import { teamName } from "./src/controller/clientController.js"
 
 const app = express();
 const server = http.createServer(app);
@@ -26,16 +28,28 @@ app.set('view engine', 'ejs'); // Pastikan sudah diatur
 
 app.use(cors());
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 app.use(ClientRouter)
 app.use(MasterRouter)
 
 const admins = {};
 
+const users = {};
+
 // Event ketika client terhubung
 io.on("connection", (socket) => {
-    console.log(`User terhubung: ${socket.id}`);
-
     const { userId, role } = socket.handshake.query;
+
+    if (role === 'user') {
+        users[userId] = socket.id;
+        console.log(`Team ${userId} connected with socket ${socket.id}`);
+    }
+
+    socket.on("TeamJoined", (teamName) => {
+        io.emit("TeamJoined", teamName)
+    })
 
     if (role === 'admin') {
         admins[userId] = socket.id; // Simpan userId sebagai admin
@@ -45,9 +59,7 @@ io.on("connection", (socket) => {
     socket.on('startQuiz', () => {
         if (role === 'admin') {
             console.log("admin has started the quiz")
-            app.get('/', () => {
-                
-            })
+            io.emit('quizStarted')
         }
     })
 
@@ -55,6 +67,9 @@ io.on("connection", (socket) => {
         if (role === 'admin') {
             console.log(`Admin ${userId} disconnected`);
             delete admins[userId]; // Hapus jika admin keluar
+        } else {
+            console.log(`User disconnected`);
+            delete users[userId];
         }
     });
 });

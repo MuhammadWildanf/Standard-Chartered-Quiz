@@ -1,8 +1,20 @@
 <%- include('../partials/header') %>
 <main>
   <div class="container d-flex justify-content-center mt-5">
-    <h1>Ini adalah halaman Client</h1>
+    <h1>Selamat Datang, Tim <%= namatim %>!</h1>
   </div>
 </main>
+
+<script>
+  var namatim = "<%= namatim %>";
+  const socket = io('http://localhost:3000', {
+    query: {
+          userId: namatim,  // ID tetap
+          role: 'user'
+      }
+  })
+
+  socket.emit("TeamJoined", namatim)
+</script>
 
 <%- include('../partials/footer') %>
