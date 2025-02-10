@@ -1,0 +1,24 @@
+{
+    "defaultCredit": 1000000,
+    "questions": [
+      {
+        "question": "Apa ibu kota Indonesia?",
+        "answers": {
+          "a": 10,
+          "b": -20,
+          "c": 30,
+          "d": 80
+        }
+      },
+      {
+        "question": "Berapakah hasil dari 5 + 5?",
+        "answers": {
+          "a": -10,
+          "b": 20,
+          "c": 30,
+          "d": 50
+        }
+      }
+    ]
+  }
+  

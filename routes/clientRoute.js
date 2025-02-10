@@ -1,10 +1,8 @@
 import express from "express"
+import { home } from "../controller/clientController.js"
 
 const router = express.Router()
 
-router.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'index.html'));
-})
-
+router.get('/', home)
 
 export default router
