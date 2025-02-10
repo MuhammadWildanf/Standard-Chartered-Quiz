@@ -9,7 +9,7 @@ import path from 'path'
 import bodyParser from 'body-parser';
 import { fileURLToPath } from 'url'
 import session from "express-session";
-import { teamName } from "./src/controller/clientController.js"
+import fs from "fs"
 
 dotenv.config();
 const app = express();
@@ -41,8 +41,6 @@ app.use(
       cookie: { secure: false }, // Set true jika menggunakan HTTPS
     })
 );
-  
-const teamNames = new Set();
 
 app.use(ClientRouter)
 app.use(MasterRouter)
@@ -50,15 +48,11 @@ app.use(MasterRouter)
 const admins = {};
 let users = {};
 
+let questions = JSON.parse(fs.readFileSync("data.json", "utf-8"));
+
 // Event ketika client terhubung
 io.on("connection", (socket) => {
     const { userId, role } = socket.handshake.query;
-
-    if (teamNames.has(userId)) {
-        console.log(`Team ${userId} sudah digunakan`);
-        socket.emit("teamNameExists", "Nama tim sudah digunakan, pilih nama lain.");
-        return;
-    }
 
     if (role === 'user') {
         users[userId] = { id: socket.id, name: userId, fund: 1000000 };
@@ -71,6 +65,14 @@ io.on("connection", (socket) => {
         admins[userId] = socket.id;
         console.log(`Admin ${userId} connected with socket ${socket.id}`);
     }
+
+    socket.on("getQuestion", (index) => {
+        if (index < questions.length) {
+            io.emit("question", questions[index]);
+        } else {
+            io.emit("end");
+        }
+    });
 
     socket.on('startQuiz', () => {
         if (role === 'admin') {
@@ -88,12 +90,6 @@ io.on("connection", (socket) => {
 
             if (users[userId]) {
                 io.emit("TeamLeave", users[userId].name);
-                delete users[userId];
-            }
-
-            if (users[userId]) {
-                io.emit("TeamLeave", users[userId].name);
-                teamNames.delete(userId); // Hapus nama tim dari daftar saat keluar
                 delete users[userId];
             }
         }

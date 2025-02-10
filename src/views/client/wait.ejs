@@ -1,14 +1,26 @@
 <%- include('../partials/header') %>
 <main>
   <div class="container d-flex flex-column align-items-center mt-5 gap-3">
-    <h2>Selamat Datang, Tim <%= namatim %>!</h2>
+    <h2>Welcome, Tim <%= namatim %>!</h2>
     <h2>Please Wait for the master to start the quiz!</h2>
-    <h1 id="credit">$ 1,000,000</h1>
+    <h1 id="credit" class="text-center"></h1>
+    <div id="question"></div>
+    <div id="options"></div>
   </div>
 </main>
 
 <script>
   var namatim = "<%= namatim %>";
+  let fund = 1000000
+
+  const formatter = new Intl.NumberFormat('us-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2
+  });
+
+  document.getElementById('credit').innerHTML =`Congratulations!<br>You've got ${formatter.format(fund)} Credits!`
+
   const socket = io('http://localhost:3000', {
     query: {
           userId: namatim,  // ID tetap
@@ -16,9 +28,26 @@
       }
   })
 
-  socket.emit("TeamJoined", namatim)
+  socket.on("updateTeams", (Teams) => {
+    fund = Teams[namatim].fund
+  })
 
-  socket.on("quizStarted")
+  socket.on("question", (data) => {
+    document.getElementById("question").innerText = data.question;
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+
+    data.options.forEach((opt, i) => {
+      const btn = document.createElement("button");
+      btn.innerText = opt;
+      btn.onclick = () => submitAnswer(i);
+      optionsDiv.appendChild(btn);
+    });
+  });
+
+  socket.on("quizStarted", () => {
+    
+  })
 </script>
 
 <%- include('../partials/footer') %>

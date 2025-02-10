@@ -1,24 +1,14 @@
-{
-    "defaultCredit": 1000000,
-    "questions": [
-      {
-        "question": "Apa ibu kota Indonesia?",
-        "answers": {
-          "a": 10,
-          "b": -20,
-          "c": 30,
-          "d": 80
-        }
-      },
-      {
-        "question": "Berapakah hasil dari 5 + 5?",
-        "answers": {
-          "a": -10,
-          "b": 20,
-          "c": 30,
-          "d": 50
-        }
-      }
-    ]
+[
+  {
+    "id": 0,
+    "question": "Apa ibu kota Indonesia?",
+    "options": ["Jakarta", "Bandung", "Surabaya", "Medan"],
+    "answer": 0
+  },
+  {
+    "id": 1,
+    "question": "Siapa pencipta teori relativitas?",
+    "options": ["Newton", "Einstein", "Galileo", "Tesla"],
+    "answer": 1
   }
-  
+]

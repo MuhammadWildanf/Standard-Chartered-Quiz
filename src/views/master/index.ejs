@@ -7,7 +7,7 @@
     </button>
 
     <div class="w-75 mt-3">
-      <h2 class="text-center">List Team</h2>
+      <h2 class="text-center">Team Lists</h2>
       <div id="list-tim" class="row g-3 justify-content-center">
         <!-- Tim akan ditampilkan di sini -->
       </div>
@@ -16,6 +16,11 @@
 </main>
 
 <script>
+  let currentIndex = 0
+  const nextQuestion = () => {
+    socket.emit("getQuestion", currentIndex);
+  }
+
   const socket = io("http://localhost:3000", {
     query: {
       userId: "admin123", // ID tetap
@@ -51,7 +56,6 @@
       .then(response => response.json())
       .then(data => console.log(data))
       .catch(error => console.error('Error:', error));
-
   });
 
   socket.on("updateTeams", (Teams) => {
@@ -76,6 +80,7 @@
 
   const startQuiz = () => {
     socket.emit("startQuiz");
+    nextQuestion();
   };
 </script>
 
