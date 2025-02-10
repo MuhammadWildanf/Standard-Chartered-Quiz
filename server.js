@@ -37,39 +37,54 @@ app.use(MasterRouter)
 const admins = {};
 
 const users = {};
+const teamNames = new Set();
 
 // Event ketika client terhubung
 io.on("connection", (socket) => {
     const { userId, role } = socket.handshake.query;
 
-    if (role === 'user') {
-        users[userId] = socket.id;
-        console.log(`Team ${userId} connected with socket ${socket.id}`);
+    if (teamNames.has(userId)) {
+        console.log(`Team ${userId} sudah digunakan`);
+        socket.emit("teamNameExists", "Nama tim sudah digunakan, pilih nama lain.");
+        return;
     }
 
-    socket.on("TeamJoined", (teamName) => {
-        io.emit("TeamJoined", teamName)
-    })
+    if (role === 'user') {
+        users[userId] = { id: socket.id, name: userId };
+        console.log(`Team ${userId} connected with socket ${socket.id}`);
+
+        io.emit("TeamJoined", userId);
+    }
 
     if (role === 'admin') {
-        admins[userId] = socket.id; // Simpan userId sebagai admin
+        admins[userId] = socket.id;
         console.log(`Admin ${userId} connected with socket ${socket.id}`);
     }
 
     socket.on('startQuiz', () => {
         if (role === 'admin') {
-            console.log("admin has started the quiz")
-            io.emit('quizStarted')
+            console.log("Admin has started the quiz");
+            io.emit('quizStarted');
         }
-    })
+    });
 
     socket.on('disconnect', () => {
         if (role === 'admin') {
             console.log(`Admin ${userId} disconnected`);
-            delete admins[userId]; // Hapus jika admin keluar
+            delete admins[userId];
         } else {
-            console.log(`User disconnected`);
-            delete users[userId];
+            console.log(`User ${userId} disconnected`);
+
+            if (users[userId]) {
+                io.emit("TeamLeave", users[userId].name);
+                delete users[userId];
+            }
+
+            if (users[userId]) {
+                io.emit("TeamLeave", users[userId].name);
+                teamNames.delete(userId); // Hapus nama tim dari daftar saat keluar
+                delete users[userId];
+            }
         }
     });
 });
@@ -77,5 +92,5 @@ io.on("connection", (socket) => {
 // Jalankan server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Server berjalan di http://localhost:${PORT}`);
+    console.log(`Server berjalan di http://192.168.88.29:${PORT}`);
 });

@@ -1,13 +1,15 @@
 <%- include('../partials/header') %>
 <main>
-  <div class="container d-flex justify-content-center mt-5">
-    <h1>Selamat Datang, Tim <%= namatim %>!</h1>
+  <div class="container d-flex flex-column align-items-center mt-5 gap-3">
+    <h2>Selamat Datang, Tim <%= namatim %>!</h2>
+    <h2>Wait to the master to start the quiz!</h2>
+    <h1 id="credit">$ 1,000,000</h1>
   </div>
 </main>
 
 <script>
   var namatim = "<%= namatim %>";
-  const socket = io('http://localhost:3000', {
+  const socket = io('http://192.168.88.29:3000', {
     query: {
           userId: namatim,  // ID tetap
           role: 'user'
