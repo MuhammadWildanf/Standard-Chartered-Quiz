@@ -1,12 +1,15 @@
-import ClientRouter from "./routes/clientRoute.js"
-import MasterRouter from "./routes/masterRoute.js"
+import ClientRouter from "./src/routes/clientRoute.js"
+import MasterRouter from "./src/routes/masterRoute.js"
 import express from 'express'
 import http from 'http'
 import { Server } from 'socket.io'
 import cors from "cors"
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
 const server = http.createServer(app);
+
 
 // Mengizinkan koneksi dari client (misalnya React, Vue, atau Angular)
 const io = new Server(server, {
@@ -15,8 +18,11 @@ const io = new Server(server, {
         methods: ["GET", "POST"]
     }
 });
-
-app.use(express.static('views'));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname,  'public')));
+app.set('views', path.join(__dirname, 'src', 'views'));
+app.set('view engine', 'ejs'); // Pastikan sudah diatur
 
 app.use(cors());
 
