@@ -4,6 +4,10 @@ export const home = (req, res) => {
 
 export const quiz = (req, res) => {
   const name = req.params.teamName;
+  // Cek apakah nama tim ada di session
+  if (!req.session.teamName || req.session.teamName !== name) {
+    return res.redirect("/"); // Redirect ke halaman utama jika akses tidak sah
+  }
   res.render("client/index.ejs", { title: "Quiz", namatim: name });
 };
 
@@ -12,9 +16,9 @@ export const teamName = (req, res) => {
   const { teamName } = req.body;
 
   if (!teamName) {
-    return res.render("client/wait.ejs", { 
-      title: "Client", 
-      errorMessage: "Nama tim wajib diisi" 
+    return res.render("client/wait.ejs", {
+      title: "Client",
+      errorMessage: "Nama tim wajib diisi",
     });
   }
 
@@ -26,6 +30,6 @@ export const teamName = (req, res) => {
   }
 
   teamNames.add(teamName); // Simpan nama tim
-
+  req.session.teamName = teamName; // Simpan di session
   res.redirect(`/quiz/${teamName}`);
 };

@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import ClientRouter from "./src/routes/clientRoute.js"
 import MasterRouter from "./src/routes/masterRoute.js"
 import express from 'express'
@@ -7,8 +8,10 @@ import cors from "cors"
 import path from 'path'
 import bodyParser from 'body-parser';
 import { fileURLToPath } from 'url'
+import session from "express-session";
 import { teamName } from "./src/controller/clientController.js"
 
+dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
@@ -30,9 +33,17 @@ app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
+app.use(
+    session({
+      secret: "secret-key", // Ganti dengan secret key yang aman
+      resave: false,
+      saveUninitialized: true,
+      cookie: { secure: false }, // Set true jika menggunakan HTTPS
+    })
+  );
 app.use(ClientRouter)
 app.use(MasterRouter)
+
 
 const admins = {};
 
