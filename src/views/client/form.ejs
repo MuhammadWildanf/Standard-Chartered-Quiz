@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+
+<main>
+  <div class="container d-flex justify-content-center mt-5">
+    <h3>Please Input Your Team Name Below!</h3>
+  </div>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <% if (typeof errorMessage !== "undefined") { %>
+          <div class="alert alert-danger"><%= errorMessage %></div>
+          <% } %>
+        <form action="/quiz" method="POST">
+          
+          <div class="form-floating mb-3">
+            <input
+              placeholder="Team Name"
+              type="text"
+              class="form-control"
+              id="floatingInput teamName"
+              name="teamName"
+              required
+            />
+            <label for="teamName" class="form-label">Team Name</label>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>

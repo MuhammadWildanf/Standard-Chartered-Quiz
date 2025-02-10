@@ -40,15 +40,15 @@ app.use(
       saveUninitialized: true,
       cookie: { secure: false }, // Set true jika menggunakan HTTPS
     })
-  );
+);
+  
+const teamNames = new Set();
+
 app.use(ClientRouter)
 app.use(MasterRouter)
 
-
 const admins = {};
-
-const users = {};
-const teamNames = new Set();
+let users = {};
 
 // Event ketika client terhubung
 io.on("connection", (socket) => {
@@ -61,10 +61,10 @@ io.on("connection", (socket) => {
     }
 
     if (role === 'user') {
-        users[userId] = { id: socket.id, name: userId };
+        users[userId] = { id: socket.id, name: userId, fund: 1000000 };
         console.log(`Team ${userId} connected with socket ${socket.id}`);
 
-        io.emit("TeamJoined", userId);
+        io.emit("updateTeams", users);
     }
 
     if (role === 'admin') {
@@ -103,5 +103,5 @@ io.on("connection", (socket) => {
 // Jalankan server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Server berjalan di http://192.168.88.29:${PORT}`);
+    console.log(`Server berjalan di http://localhost:${PORT}`);
 });

@@ -1,5 +1,5 @@
 export const home = (req, res) => {
-  res.render("client/wait.ejs", { title: "Client" });
+  res.render("client/form.ejs", { title: "Client" });
 };
 
 export const quiz = (req, res) => {
@@ -8,7 +8,7 @@ export const quiz = (req, res) => {
   if (!req.session.teamName || req.session.teamName !== name) {
     return res.redirect("/"); // Redirect ke halaman utama jika akses tidak sah
   }
-  res.render("client/index.ejs", { title: "Quiz", namatim: name });
+  res.render("client/wait.ejs", { title: "Quiz", namatim: name });
 };
 
 const teamNames = new Set();
@@ -16,14 +16,14 @@ export const teamName = (req, res) => {
   const { teamName } = req.body;
 
   if (!teamName) {
-    return res.render("client/wait.ejs", {
+    return res.render("client/form.ejs", {
       title: "Client",
       errorMessage: "Nama tim wajib diisi",
     });
   }
 
   if (teamNames.has(teamName)) {
-    return res.render("client/wait.ejs", {
+    return res.render("client/form.ejs", {
       title: "Client",
       errorMessage: "Nama tim sudah digunakan, pilih nama lain.",
     });
@@ -33,3 +33,9 @@ export const teamName = (req, res) => {
   req.session.teamName = teamName; // Simpan di session
   res.redirect(`/quiz/${teamName}`);
 };
+
+export const updateTeams = (req, res) => {
+  const { teamName } = req.body
+
+  teamNames.delete(teamName)
+}

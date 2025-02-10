@@ -1,31 +1,24 @@
 <%- include('../partials/header') %>
-
 <main>
-  <div class="container d-flex justify-content-center mt-5">
-    <h3>Please Wait for the Master to start the quiz!</h3>
-  </div>
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <% if (typeof errorMessage !== "undefined") { %>
-          <div class="alert alert-danger"><%= errorMessage %></div>
-          <% } %>
-        <form action="/quiz" method="POST">
-          <div class="mb-3">
-            <label for="teamName" class="form-label">Nama Tim</label>
-            <input
-              type="text"
-              class="form-control"
-              id="teamName"
-              name="teamName"
-              required
-            />
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Submit</button>
-        </form>
-      </div>
-    </div>
+  <div class="container d-flex flex-column align-items-center mt-5 gap-3">
+    <h2>Selamat Datang, Tim <%= namatim %>!</h2>
+    <h2>Please Wait for the master to start the quiz!</h2>
+    <h1 id="credit">$ 1,000,000</h1>
   </div>
 </main>
+
+<script>
+  var namatim = "<%= namatim %>";
+  const socket = io('http://localhost:3000', {
+    query: {
+          userId: namatim,  // ID tetap
+          role: 'user'
+      }
+  })
+
+  socket.emit("TeamJoined", namatim)
+
+  socket.on("quizStarted")
+</script>
 
 <%- include('../partials/footer') %>
