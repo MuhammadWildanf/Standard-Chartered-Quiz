@@ -71,6 +71,7 @@ io.on("connection", (socket) => {
             io.emit("question", questions[index]);
         } else {
             io.emit("end");
+            console.log("quiz was ended")
         }
     });
 
@@ -99,10 +100,9 @@ io.on("connection", (socket) => {
             console.log(`Admin ${userId} disconnected`);
             delete admins[userId];
         } else {
-            console.log(`User ${userId} disconnected`);
-
             if (users[userId]) {
                 io.emit("TeamLeave", users[userId].name);
+                console.log(`User ${userId} disconnected`);
                 delete users[userId];
             }
         }

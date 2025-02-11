@@ -6,12 +6,17 @@
       <h2>Please Wait for the master to start the quiz!</h2>
       <h1 id="credit"></h1>
     </section>
-    <section class="quiz">
+    <section class="quiz" style="display: none;">
       <div id="question"></div>
       <div class="row justify-content-center">
         <div class="col-md-6">
           <div id="options"></div>
         </div>
+      </div>
+    </section>
+    <section class="end" style="display: none;">
+      <div class="congrats">
+
       </div>
     </section>
   </div>
@@ -34,7 +39,7 @@
     fund
   )} Credits!`;
 
-  const socket = io("http://localhost:3000", {
+  const socket = io("http://192.168.88.15:3000", {
     query: {
       userId: namatim, // ID tetap
       role: "user",
@@ -85,15 +90,30 @@
       // Tambahkan tombol ke dalam optionsDiv
       optionsDiv.appendChild(btn);
     });
+
+    let duration = data.durations
+    const timer = document.querySelector(".timer")
+
+    startTimer(duration, timer)
   });
 
+  socket.on("end", () => {
+    console.log("quiz was ended")
+    const quizElement = document.querySelector(".quiz");
+    const endElement = document.querySelector(".end");
+    const congratsElement = document.querySelector(".congrats");
+    
+    quizElement.style.display = "none";
+    endElement.style.display = "block";
+
+    congratsElement.classList.add("h2", "text-center");
+    congratsElement.innerText = `Quiz was ended, your final fund is ${formatter.format(fund)}`
+  })
+
   socket.on("quizStarted", () => {
-    console.log("Event quizStarted diterima!"); // Harus muncul di console browser
-    const logo = document.querySelector(".logo");
+    console.log("Event quizStarted diterima!");
     const waitElement = document.querySelector(".wait");
     const quizElement = document.querySelector(".quiz");
-
-    logo.style.marginTop = "100px";
 
     if (waitElement) {
       console.log("Menyembunyikan wait...");
@@ -110,6 +130,23 @@
       console.log("Elemen .quiz tidak ditemukan!");
     }
   });
+
+  const startTimer = (duration, timer) => {
+    let waktu = duration;
+
+    const updateTimer = () => {
+      timer.textContent = waktu;
+      if (waktu <= 0) {
+        clearInterval(timerr);
+        timer.textContent = "Time's Up!";
+      }
+      waktu--;
+    }
+
+    let timerr = setInterval(updateTimer, 1000);
+
+    updateTimer()
+  }
 </script>
 
 <%- include('../partials/footer') %>

@@ -3,12 +3,14 @@
     "id": 0,
     "question": "Apa ibu kota Indonesia?",
     "options": ["Jakarta", "Bandung", "Surabaya", "Medan"],
-    "answer": 0
+    "answer": 0,
+    "durations": 10
   },
   {
     "id": 1,
     "question": "Siapa pencipta teori relativitas?",
     "options": ["Newton", "Einstein", "Galileo", "Tesla"],
-    "answer": 1
+    "answer": 1,
+    "durations": 10
   }
 ]
