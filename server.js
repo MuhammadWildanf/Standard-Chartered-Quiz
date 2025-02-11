@@ -74,11 +74,24 @@ io.on("connection", (socket) => {
         }
     });
 
-    socket.on('startQuiz', () => {
-        if (role === 'admin') {
-            console.log("Admin has started the quiz");
-            io.emit('quizStarted');
+    socket.on("addfund", (teamName, amount) => {
+        if (users[teamName]) {
+            users[teamName].fund += amount;
+            io.emit("updateTeams", users);
         }
+    })
+
+    socket.on("removefund", (teamName, amount) => { 
+        if (users[teamName]) {
+            users[teamName].fund -= amount;
+            io.emit("updateTeams", users);
+        }
+    })
+
+    socket.on('startQuiz', () => {
+        console.log("Admin has started the quiz");
+        io.emit('quizStarted');
+        console.log("Event quizStarted dikirim ke semua klien");
     });
 
     socket.on('disconnect', () => {

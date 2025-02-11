@@ -16,10 +16,10 @@
 </main>
 
 <script>
-  let currentIndex = 0
+  let currentIndex = 0;
   const nextQuestion = () => {
     socket.emit("getQuestion", currentIndex);
-  }
+  };
 
   const socket = io("http://localhost:3000", {
     query: {
@@ -28,12 +28,11 @@
     },
   });
 
-  const formatter = new Intl.NumberFormat('us-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2
+  const formatter = new Intl.NumberFormat("us-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
   });
-
 
   // Menghapus tim saat keluar
   socket.on("TeamLeave", (namatim) => {
@@ -46,36 +45,30 @@
       listTim.removeChild(itemToRemove);
     }
 
-    fetch('/updatetim', {
-      method: 'POST',
+    fetch("/updatetim", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ teamName: namatim })
+      body: JSON.stringify({ teamName: namatim }),
     })
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(error => console.error('Error:', error));
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Error:", error));
   });
 
   socket.on("updateTeams", (Teams) => {
     const listTim = document.getElementById("list-tim");
+    listTim.innerHTML = "";
 
     for (let id in Teams) {
-      // Cek apakah tim sudah ada dalam daftar
-      const existingItem = Array.from(listTim.children).find(
-        (div) => div.getAttribute("data-team") === Teams[id].name
-      );
-      if (!existingItem) {
-        const div = document.createElement("div");
-        const fund = formatter.format(Teams[id].fund)
-        div.className = "col-md-4 text-center p-2";
-        div.setAttribute("data-team", Teams[id].name);
-        div.innerHTML = `<div class="p-2 border rounded bg-light" style="font-weight: 600; font-size: 20px;">${Teams[id].name}<br>${fund}</div>`;
-        listTim.appendChild(div);
-      }
+      const div = document.createElement("div");
+      const fund = formatter.format(Teams[id].fund);
+      div.className = "col-md-4 text-center p-2";
+      div.setAttribute("data-team", Teams[id].name);
+      div.innerHTML = `<div class="p-2 border rounded bg-light" style="font-weight: 600; font-size: 20px;">${Teams[id].name}<br>${fund}</div>`;
+      listTim.appendChild(div);
     }
-
   });
 
   const startQuiz = () => {

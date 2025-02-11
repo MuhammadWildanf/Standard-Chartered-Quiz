@@ -1,53 +1,115 @@
 <%- include('../partials/header') %>
 <main>
   <div class="container d-flex flex-column align-items-center mt-5 gap-3">
-    <h2>Welcome, Tim <%= namatim %>!</h2>
-    <h2>Please Wait for the master to start the quiz!</h2>
-    <h1 id="credit" class="text-center"></h1>
-    <div id="question"></div>
-    <div id="options"></div>
+    <section class="wait text-center">
+      <h2>Welcome, Tim <%= namatim %>!</h2>
+      <h2>Please Wait for the master to start the quiz!</h2>
+      <h1 id="credit"></h1>
+    </section>
+    <section class="quiz">
+      <div id="question"></div>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div id="options"></div>
+        </div>
+      </div>
+    </section>
   </div>
 </main>
 
 <script>
   var namatim = "<%= namatim %>";
-  let fund = 1000000
+  let fund = 1000000;
+  let question;
 
-  const formatter = new Intl.NumberFormat('us-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2
+  const formatter = new Intl.NumberFormat("us-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
   });
 
-  document.getElementById('credit').innerHTML =`Congratulations!<br>You've got ${formatter.format(fund)} Credits!`
+  document.getElementById(
+    "credit"
+  ).innerHTML = `Congratulations!<br>You've got ${formatter.format(
+    fund
+  )} Credits!`;
 
-  const socket = io('http://localhost:3000', {
+  const socket = io("http://localhost:3000", {
     query: {
-          userId: namatim,  // ID tetap
-          role: 'user'
-      }
-  })
+      userId: namatim, // ID tetap
+      role: "user",
+    },
+  });
+
+  const submitAnswer = (i) => {
+    if (i === question.answer) {
+      fund += 500000;
+      console.log(fund);
+      socket.emit("addfund", namatim, 500000);
+    } else {
+      fund -= 100000;
+      console.log(fund);
+      socket.emit("removefund", namatim, 100000);
+    }
+  }
 
   socket.on("updateTeams", (Teams) => {
-    fund = Teams[namatim].fund
-  })
+    fund = Teams[namatim].fund;
+  });
 
   socket.on("question", (data) => {
-    document.getElementById("question").innerText = data.question;
+    const questionDiv = document.getElementById("question");
+    questionDiv.innerText = data.question;
+    questionDiv.classList.add("h2", "text-center");
+
+    question = data;
+
     const optionsDiv = document.getElementById("options");
     optionsDiv.innerHTML = "";
+    optionsDiv.classList.add(
+      "d-flex",
+      "flex-column",
+      "gap-3",
+      "align-items-center",
+      "mt-3"
+    );
 
     data.options.forEach((opt, i) => {
       const btn = document.createElement("button");
       btn.innerText = opt;
       btn.onclick = () => submitAnswer(i);
+
+      // Tambahkan class Bootstrap ke tombol
+      btn.classList.add("btn", "btn-primary", "w-100");
+
+      // Tambahkan tombol ke dalam optionsDiv
       optionsDiv.appendChild(btn);
     });
   });
 
   socket.on("quizStarted", () => {
-    
-  })
+    console.log("Event quizStarted diterima!"); // Harus muncul di console browser
+    const logo = document.querySelector(".logo");
+    const waitElement = document.querySelector(".wait");
+    const quizElement = document.querySelector(".quiz");
+
+    logo.style.marginTop = "100px";
+
+    if (waitElement) {
+      console.log("Menyembunyikan wait...");
+      waitElement.classList.remove("d-flex");
+      waitElement.classList.add("d-none");
+    } else {
+      console.log("Elemen .wait tidak ditemukan!");
+    }
+
+    if (quizElement) {
+      console.log("Menampilkan quiz...");
+      quizElement.style.display = "block";
+    } else {
+      console.log("Elemen .quiz tidak ditemukan!");
+    }
+  });
 </script>
 
 <%- include('../partials/footer') %>
