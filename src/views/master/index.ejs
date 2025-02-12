@@ -21,17 +21,17 @@
     socket.emit("getQuestion", idx);
   };
 
-  const socket = io("http://192.168.88.15:3000", {
+  const socket = io("http://192.168.88.57:3000", {
     query: {
       userId: "admin123", // ID tetap
       role: "admin",
     },
   });
 
-  const formatter = new Intl.NumberFormat("us-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
+  const formatter = new Intl.NumberFormat('en-SG', {
+    style: 'currency',
+    currency: 'SGD',
+    currencyDisplay: 'symbol',
   });
 
   // Menghapus tim saat keluar
@@ -73,7 +73,7 @@
       const fund = formatter.format(Teams[id].fund);
       div.className = "col-md-4 text-center p-2";
       div.setAttribute("data-team", Teams[id].name);
-      div.innerHTML = `<div class="p-2 border rounded bg-light" style="font-weight: 600; font-size: 20px;">${Teams[id].name}<br>${fund}</div>`;
+      div.innerHTML = `<div class="p-2 border rounded bg-light" style="font-weight: 600; font-size: 20px;">${Teams[id].name}<br>S${fund}</div>`;
       listTim.appendChild(div);
     }
   });

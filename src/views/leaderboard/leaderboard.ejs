@@ -1,0 +1,139 @@
+<%- include('../partials/header') %>
+<main>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card shadow rounded">
+          <div class="card-body">
+            <div class="card-title text-center">
+              <h1>Leaderboard</h1>
+            </div>
+            <div class="table-responsif mt-3">
+              <table class="table table-bordered table-striped text-center">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Rank</th>
+                    <th>Team Name</th>
+                    <th>Funds</th>
+                  </tr>
+                </thead>
+                <tbody id="list-tim"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  let currentIndex = 0;
+  const nextQuestion = (idx) => {
+    socket.emit("getQuestion", idx);
+  };
+
+  const socket = io("http://192.168.88.57:3000", {
+    query: {
+      userId: "host", // ID tetap
+      role: "host",
+    },
+  });
+
+  const formatter = new Intl.NumberFormat("en-SG", {
+    style: "currency",
+    currency: "SGD",
+    currencyDisplay: "symbol",
+  });
+
+  // Menghapus tim saat keluar
+  // socket.on("TeamLeave", (namatim) => {
+  //   console.log(`${namatim} left`);
+  //   const listTim = document.getElementById("list-tim");
+  //   const itemToRemove = Array.from(listTim.children).find(
+  //     (div) => div.getAttribute("data-team") === namatim
+  //   );
+  //   if (itemToRemove) {
+  //     listTim.removeChild(itemToRemove);
+  //   }
+
+  //   fetch("/updatetim", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ teamName: namatim }),
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => console.log(data))
+  //     .catch((error) => console.error("Error:", error));
+  // });
+
+  socket.on("TeamLeave", (namatim) => {
+    console.log(`${namatim} left`);
+
+    fetch("/updatetim", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ teamName: namatim }),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Error:", error));
+  });
+
+  socket.on("question", (data) => {
+    let duration = data.durations;
+    const timer = document.querySelector(".timer");
+
+    startTimer(duration, timer);
+  });
+
+  socket.on("updateTeams", (Teams) => {
+    const listTim = document.getElementById("list-tim");
+    listTim.innerHTML = "";
+
+    // Konversi objek ke array lalu urutkan berdasarkan fund (dana) tertinggi
+    let sortedTeams = Object.values(Teams).sort((a, b) => b.fund - a.fund);
+
+    sortedTeams.forEach((team, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${team.name}</td>
+        <td>${formatter.format(team.fund)}</td>
+      `;
+      listTim.appendChild(row);
+    });
+  });
+
+  const startQuiz = () => {
+    socket.emit("startQuiz");
+
+    const startBtn = document.querySelector(".start");
+    startBtn.style.display = "none";
+
+    nextQuestion(currentIndex);
+  };
+
+  const startTimer = (duration, timer) => {
+    let waktu = duration;
+
+    const updateTimer = () => {
+      timer.textContent = waktu;
+      if (waktu <= 0) {
+        clearInterval(timerr);
+        timer.textContent = "Time's Up!";
+        currentIndex += 1;
+        nextQuestion(currentIndex);
+      }
+      waktu--;
+    };
+
+    let timerr = setInterval(updateTimer, 1000);
+
+    updateTimer();
+  };
+</script>
+
+<%- include('../partials/footer') %>

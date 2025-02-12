@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import ClientRouter from "./src/routes/clientRoute.js"
 import MasterRouter from "./src/routes/masterRoute.js"
+import HostRouter from "./src/routes/hostRoute.js"
 import express from 'express'
 import http from 'http'
 import { Server } from 'socket.io'
@@ -44,6 +45,7 @@ app.use(
 
 app.use(ClientRouter)
 app.use(MasterRouter)
+app.use(HostRouter)
 
 const admins = {};
 let users = {};

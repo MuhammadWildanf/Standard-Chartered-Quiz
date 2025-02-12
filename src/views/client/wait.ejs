@@ -6,7 +6,7 @@
       <h2>Please Wait for the master to start the quiz!</h2>
       <h1 id="credit"></h1>
     </section>
-    <section class="quiz" style="display: none;">
+    <section class="quiz" style="display: none">
       <div id="question"></div>
       <div class="row justify-content-center">
         <div class="col-md-6">
@@ -14,10 +14,8 @@
         </div>
       </div>
     </section>
-    <section class="end" style="display: none;">
-      <div class="congrats">
-
-      </div>
+    <section class="end" style="display: none">
+      <div class="congrats"></div>
     </section>
   </div>
 </main>
@@ -27,19 +25,19 @@
   let fund = 1000000;
   let question;
 
-  const formatter = new Intl.NumberFormat("us-US", {
+  const formatter = new Intl.NumberFormat("en-SG", {
     style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
+    currency: "SGD",
+    currencyDisplay: "symbol",
   });
 
   document.getElementById(
     "credit"
-  ).innerHTML = `Congratulations!<br>You've got ${formatter.format(
+  ).innerHTML = `Congratulations!<br>You've got S${formatter.format(
     fund
   )} Credits!`;
 
-  const socket = io("http://192.168.88.15:3000", {
+  const socket = io("http://192.168.88.57:3000", {
     query: {
       userId: namatim, // ID tetap
       role: "user",
@@ -47,6 +45,14 @@
   });
 
   const submitAnswer = (i) => {
+    const optionsDiv = document.getElementById("options");
+
+    let btn = optionsDiv.querySelectorAll("*");
+
+    btn.forEach((button) => {
+      button.classList.add("disabled");
+    });
+
     if (i === question.answer) {
       fund += 500000;
       console.log(fund);
@@ -56,7 +62,7 @@
       console.log(fund);
       socket.emit("removefund", namatim, 100000);
     }
-  }
+  };
 
   socket.on("updateTeams", (Teams) => {
     fund = Teams[namatim].fund;
@@ -91,24 +97,26 @@
       optionsDiv.appendChild(btn);
     });
 
-    let duration = data.durations
-    const timer = document.querySelector(".timer")
+    let duration = data.durations;
+    const timer = document.querySelector(".timer");
 
-    startTimer(duration, timer)
+    startTimer(duration, timer);
   });
 
   socket.on("end", () => {
-    console.log("quiz was ended")
+    console.log("quiz was ended");
     const quizElement = document.querySelector(".quiz");
     const endElement = document.querySelector(".end");
     const congratsElement = document.querySelector(".congrats");
-    
+
     quizElement.style.display = "none";
     endElement.style.display = "block";
 
     congratsElement.classList.add("h2", "text-center");
-    congratsElement.innerText = `Quiz was ended, your final fund is ${formatter.format(fund)}`
-  })
+    congratsElement.innerText = `Quiz was ended, your final fund is S${formatter.format(
+      fund
+    )}`;
+  });
 
   socket.on("quizStarted", () => {
     console.log("Event quizStarted diterima!");
@@ -141,12 +149,12 @@
         timer.textContent = "Time's Up!";
       }
       waktu--;
-    }
+    };
 
     let timerr = setInterval(updateTimer, 1000);
 
-    updateTimer()
-  }
+    updateTimer();
+  };
 </script>
 
 <%- include('../partials/footer') %>
