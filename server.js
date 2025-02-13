@@ -77,16 +77,9 @@ io.on("connection", (socket) => {
         }
     });
 
-    socket.on("addfund", (teamName, amount) => {
+    socket.on("updatefund", (teamName, amount) => {
         if (users[teamName]) {
             users[teamName].fund += amount;
-            io.emit("updateTeams", users);
-        }
-    })
-
-    socket.on("removefund", (teamName, amount) => { 
-        if (users[teamName]) {
-            users[teamName].fund -= amount;
             io.emit("updateTeams", users);
         }
     })
