@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import dotenv from "dotenv";
 import ClientRouter from "./src/routes/clientRoute.js"
 import MasterRouter from "./src/routes/masterRoute.js"
@@ -15,6 +16,7 @@ import fs from "fs"
 dotenv.config();
 const app = express();
 const server = http.createServer(app);
+const PORT = process.env.PORT || 3000;
 
 
 // Mengizinkan koneksi dari client (misalnya React, Vue, atau Angular)
@@ -105,7 +107,6 @@ io.on("connection", (socket) => {
 });
 
 // Jalankan server
-const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`Server berjalan di http://localhost:${PORT}`);
 });

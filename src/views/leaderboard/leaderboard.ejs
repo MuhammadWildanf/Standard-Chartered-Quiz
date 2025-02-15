@@ -33,7 +33,7 @@
     socket.emit("getQuestion", idx);
   };
 
-  const socket = io("http://192.168.88.57:3000", {
+  const socket = io("http://localhost:3000", {
     query: {
       userId: "host", // ID tetap
       role: "host",

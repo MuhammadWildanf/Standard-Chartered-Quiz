@@ -34,13 +34,13 @@
   let fund = 1000000;
   let question;
 
-  const logo = document.querySelector(".logo");
-  const logoimg = document.querySelector("#logo");
+  // const logo = document.querySelector(".logo");
+  // const logoimg = document.querySelector("#logo");
 
-  logo.style.marginTop = "-50px";
-  logo.style.maxWidth = "250px";
-  logoimg.style.width = "200px";
-  logoimg.style.height = "107px";
+  // logo.style.marginTop = "-50px";
+  // logo.style.maxWidth = "250px";
+  // logoimg.style.width = "200px";
+  // logoimg.style.height = "107px";
 
   const formatter = new Intl.NumberFormat("en-SG", {
     style: "currency",
@@ -54,7 +54,7 @@
     fund
   )} </h1><br>Initial Balance`;
 
-  const socket = io("http://192.168.88.57:3000", {
+  const socket = io("http://localhost:3000", {
     query: {
       userId: namatim, // ID tetap
       role: "user",
