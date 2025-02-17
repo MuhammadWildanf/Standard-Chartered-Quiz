@@ -82,6 +82,7 @@ io.on("connection", (socket) => {
     socket.on("updatefund", (teamName, amount) => {
         if (users[teamName]) {
             users[teamName].fund += amount;
+            console.log('Updated fund for', teamName, 'to', amount);
             io.emit("updateTeams", users);
         }
     })

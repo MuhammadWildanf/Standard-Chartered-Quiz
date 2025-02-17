@@ -79,6 +79,7 @@
     });
 
     fund += (fund * i) / 100;
+    console.log(`Fund after question: S${formatter.format(fund)} (calculated from ${i}% adjustment)`);
 
     socket.emit("updatefund", (teamName, amount) => {
       teamName = namatim;

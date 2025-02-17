@@ -65,6 +65,7 @@
   })
 
   socket.on("updateTeams", (Teams) => {
+    console.log("Updated teams:", Teams);
     const listTim = document.getElementById("list-tim");
     listTim.innerHTML = "";
 

@@ -1,23 +1,49 @@
 [
   {
     "id": 0,
-    "question": "Apa ibu kota Indonesia?",
+    "question": "Low unemployment, economic stability, steady economic growth ",
     "options": [
-      { "text": "Jakarta", "value": 10 },
-      { "text": "Bandung", "value": 0 },
-      { "text": "Surabaya", "value": 0 },
-      { "text": "Medan", "value": 0 }
+      { "text": "Cash", "value": 0.05 },
+      { "text": "Global Equities", "value": 0.25 },
+      { "text": "Global Bonds", "value": 0.04 },
+      { "text": "Private Credit", "value": 0.09 },
+      { "text": "Private Equity", "value": 0.18 }
     ],
     "durations": 10
   },
   {
     "id": 1,
-    "question": "Siapa pencipta teori relativitas?",
+    "question": "War, Rising Inflation, Geopolitical Uncertainty",
     "options": [
-      { "text": "Newton", "value": 0 },
-      { "text": "Einstein", "value": 10 },
-      { "text": "Galileo", "value": 0 },
-      { "text": "Tesla", "value": 0 }
+      { "text": "Cash", "value": 0.03 },
+      { "text": "Global Equities", "value": -0.18 },
+      { "text": "Global Bonds", "value": -0.13 },
+      { "text": "Private Credit", "value": 0.06 },
+      { "text": "Private Equity", "value": -0.05 }
+    ],
+    "durations": 10
+  },
+  {
+    "id": 2,
+    "question": "Recession, Central Banks are aggressively cutting Interest rates",
+    "options": [
+      { "text": "Cash", "value": 0 },
+      { "text": "Global Equities", "value": 0.17 },
+      { "text": "Global Bonds", "value": 8 },
+      { "text": "Private Credit", "value": 5 },
+      { "text": "Private Equity", "value": 22 }
+    ],
+    "durations": 10
+  },
+  {
+    "id": 3,
+    "question": "High Interest Rates,  High Inflation,  Recilient Global Growth",
+    "options": [
+      { "text": "Cash", "value": 2 },
+      { "text": "Global Equities", "value": -0.21 },
+      { "text": "Global Bonds", "value": 0.11 },
+      { "text": "Private Credit", "value": 0.06 },
+      { "text": "Private Equity", "value": -0.14 }
     ],
     "durations": 10
   }
