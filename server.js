@@ -79,7 +79,6 @@ io.on("connection", (socket) => {
       io.emit("question", questions[index]);
     } else {
       io.emit("end");
-      console.log("quiz was ended");
     }
   });
   socket.on("getQuestionInleaderboard", (index) => {
@@ -87,7 +86,6 @@ io.on("connection", (socket) => {
       io.emit("questioninLeaderboard", questions[index]);
     } else {
       io.emit("endinLeaderboard");
-      console.log("quiz was ended");
     }
   });
 
