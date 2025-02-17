@@ -19,6 +19,8 @@
   let currentIndex = 0;
   const nextQuestion = (idx) => {
     socket.emit("getQuestion", idx);
+    socket.emit("getQuestionInleaderboard", idx);
+    
   };
 
   const socket = io("http://localhost:3000", {

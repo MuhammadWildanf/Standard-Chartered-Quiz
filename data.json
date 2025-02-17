@@ -1,7 +1,7 @@
 [
   {
     "id": 0,
-    "question": "Low unemployment, economic stability, steady economic growth ",
+    "question": "(question 1) Low unemployment, economic stability, steady economic growth ",
     "options": [
       { "text": "Cash", "value": 0.05 },
       { "text": "Global Equities", "value": 0.25 },
@@ -13,7 +13,7 @@
   },
   {
     "id": 1,
-    "question": "War, Rising Inflation, Geopolitical Uncertainty",
+    "question": "(question 2) War, Rising Inflation, Geopolitical Uncertainty",
     "options": [
       { "text": "Cash", "value": 0.03 },
       { "text": "Global Equities", "value": -0.18 },
@@ -25,21 +25,21 @@
   },
   {
     "id": 2,
-    "question": "Recession, Central Banks are aggressively cutting Interest rates",
+    "question": "(question 3) Recession, Central Banks are aggressively cutting Interest rates",
     "options": [
-      { "text": "Cash", "value": 0 },
+      { "text": "Cash", "value": 0.00 },
       { "text": "Global Equities", "value": 0.17 },
-      { "text": "Global Bonds", "value": 8 },
-      { "text": "Private Credit", "value": 5 },
-      { "text": "Private Equity", "value": 22 }
+      { "text": "Global Bonds", "value": 0.08 },
+      { "text": "Private Credit", "value": 0.05 },
+      { "text": "Private Equity", "value": 0.022 }
     ],
     "durations": 10
   },
   {
     "id": 3,
-    "question": "High Interest Rates,  High Inflation,  Recilient Global Growth",
+    "question": "(question 4) High Interest Rates,  High Inflation,  Recilient Global Growth",
     "options": [
-      { "text": "Cash", "value": 2 },
+      { "text": "Cash", "value": 0.02 },
       { "text": "Global Equities", "value": -0.21 },
       { "text": "Global Bonds", "value": 0.11 },
       { "text": "Private Credit", "value": 0.06 },

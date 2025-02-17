@@ -1,7 +1,15 @@
 <%- include('../partials/header') %>
 <main>
   <div class="container mt-5">
-    <section class="leaderboard">
+    <section class="quiz">
+      <div id="question"></div>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div id="options"></div>
+        </div>
+      </div>
+    </section>
+    <section class="leaderboard" style="display: none">
       <div class="row justify-content-center">
         <div class="col-md-8">
           <div class="card shadow rounded">
@@ -30,6 +38,7 @@
 </main>
 
 <script>
+  let question;
   let currentIndex = 0;
   const nextQuestion = (idx) => {
     socket.emit("getQuestion", idx);
@@ -84,11 +93,48 @@
       .catch((error) => console.error("Error:", error));
   });
 
-  socket.on("question", (data) => {
+  socket.on("questioninLeaderboard", (data) => {
+    const questionDiv = document.getElementById("question");
+    questionDiv.innerText = data.question;
+    questionDiv.classList.add("h2", "text-center");
+
+    question = data;
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+    optionsDiv.classList.add(
+      "d-flex",
+      "flex-column",
+      "gap-3",
+      "align-items-center",
+      "mt-3"
+    );
+
+    data.options.forEach((opt, i) => {
+      const btn = document.createElement("button");
+      btn.innerText = opt.text; // Ambil teks dari objek option
+      btn.onclick = () => submitAnswer(opt.value);
+
+      // Tambahkan class Bootstrap ke tombol
+      btn.classList.add("btn", "btn-primary", "w-100");
+
+      // Tambahkan tombol ke dalam optionsDiv
+      optionsDiv.appendChild(btn);
+    });
+
     let duration = data.durations;
     const timer = document.querySelector(".timer");
 
     startTimer(duration, timer);
+  });
+
+  socket.on("endinLeaderboard", () => {
+    console.log("quiz was ended");
+    const quizElement = document.querySelector(".quiz");
+    const leaderboardElement = document.querySelector(".leaderboard");
+
+    quizElement.style.display = "none";
+    leaderboardElement.style.display = "block";
   });
 
   socket.on("updateTeams", (Teams) => {
