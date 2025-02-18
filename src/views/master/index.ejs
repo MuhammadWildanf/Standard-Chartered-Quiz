@@ -1,15 +1,27 @@
 <%- include('../partials/header') %>
 <main>
   <div class="container d-flex flex-column align-items-center mt-5 gap-3">
-    <h1>Ini adalah halaman Master</h1>
-    <button type="button" class="btn btn-primary start" onclick="startQuiz()">
-      Start Quiz!
+    <h1 class="text-white">Get Ready for Portfolio Game</h1>
+    <p class="text-white">Wait until all participants are ready</p>
+    <button
+      type="button"
+      class="btn btn-primary start"
+      style="border-radius: 50px"
+      onclick="startQuiz()"
+    >
+      Next Question
     </button>
-
+    <button
+      type="button"
+      class="btn btn-danger reset"
+      style="border-radius: 50px"
+      onclick="reset()"
+    >
+      Reset Quiz
+    </button>
     <div class="w-75 mt-3">
-      <h2 class="text-center">Team Lists</h2>
-      <div id="list-tim" class="row g-3 justify-content-center">
-      </div>
+      <h2 class="text-center text-white">Team Lists</h2>
+      <div id="list-tim" class="row g-3 justify-content-center"></div>
     </div>
   </div>
 </main>
@@ -19,20 +31,19 @@
   const nextQuestion = (idx) => {
     socket.emit("getQuestion", idx);
     socket.emit("getQuestionInleaderboard", idx);
-
   };
 
-  const socket = io("http://localhost:3000", {
+  const socket = io("http://192.168.88.116:3000", {
     query: {
       userId: "admin123", // ID tetap
       role: "admin",
     },
   });
 
-  const formatter = new Intl.NumberFormat('en-SG', {
-    style: 'currency',
-    currency: 'SGD',
-    currencyDisplay: 'symbol',
+  const formatter = new Intl.NumberFormat("en-SG", {
+    style: "currency",
+    currency: "SGD",
+    currencyDisplay: "symbol",
   });
 
   // Menghapus tim saat keluar
@@ -59,11 +70,11 @@
   });
 
   socket.on("question", (data) => {
-    let duration = data.durations
-    const timer = document.querySelector(".timer")
+    let duration = data.durations;
+    const timer = document.querySelector(".timer");
 
-    startTimer(duration, timer)
-  })
+    startTimer(duration, timer);
+  });
 
   socket.on("updateTeams", (Teams) => {
     console.log("Updated teams:", Teams);
@@ -80,13 +91,27 @@
     }
   });
 
+  socket.on("resetData" , () => {
+    const startBtn = document.querySelector(".start");
+    startBtn.style.display = "block";
+
+    const listTim = document.getElementById("list-tim");
+    listTim.innerHTML = ""; // Clear team list
+  })
+
   const startQuiz = () => {
     socket.emit("startQuiz");
 
-    const startBtn = document.querySelector(".start")
-    startBtn.style.display = "none"
+    const startBtn = document.querySelector(".start");
+    startBtn.style.display = "none";
 
     nextQuestion(currentIndex);
+  };
+
+  const reset = () => {
+    if (confirm("Are you sure you want to reset the quiz?")) {
+      socket.emit("reset");
+    }
   };
 
   const startTimer = (duration, timer) => {
@@ -97,17 +122,17 @@
       if (waktu <= 0) {
         clearInterval(timerr);
         timer.textContent = "Time's Up!";
-        currentIndex += 1
-        console.log(`index  ${currentIndex} saat ini`)
-        nextQuestion(currentIndex)
+        currentIndex += 1;
+        console.log(`index  ${currentIndex} saat ini`);
+        nextQuestion(currentIndex);
       }
       waktu--;
-    }
+    };
 
     let timerr = setInterval(updateTimer, 1000);
 
-    updateTimer()
-  }
+    updateTimer();
+  };
 </script>
 
 <%- include('../partials/footer') %>

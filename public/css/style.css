@@ -4,6 +4,7 @@
     flex-direction: column;
     min-height: 100vh;
     margin: 0;
+    background: linear-gradient(90deg, #2C3A85 0%, #0061C5 100%)
   }
 
   /* Konten utama agar fleksibel */
@@ -12,19 +13,19 @@
   }
 
   /* Border Header & Footer */
-  .border-line {
-    width: 100%;
-    height: 15px;
-    background: rgba(4, 115, 234, 1);
-  }
-
-  /* Border lebih kecil di kiri */
-  .border-inline {
-    width: 75%; /* Sesuaikan ukuran yang diinginkan */
-    height: 15px;
-    background: rgba(56, 210, 0, 1);
-  }
-
   .logo {
     margin-top: -10px;
   }
+
+
+  /* Kelas untuk tombol yang dipilih */
+.selected {
+  background-color: #4CAF50; /* Ganti dengan warna yang diinginkan */
+  color: white;
+}
+
+/* Kelas untuk tombol yang dinonaktifkan */
+.disabled {
+  background-color: #f0f0f0;
+  color: #ccc;
+}

@@ -9,10 +9,14 @@
       style="margin-top: -140px"
     >
       <section class="wait text-center">
-        <h2>Welcome, Tim <strong><%= namatim %>,</strong></h2>
-        <h2 id="credit"></h2>
+        <h2 class="text-white">
+          Welcome, Tim <strong><%= namatim %>,</strong>
+        </h2>
+        <h2 id="credit" class="text-white"></h2>
       </section>
       <section class="quiz" style="display: none">
+        <div class="timer h2 me-4 text-white text-center"></div>
+        <div id="questionIndex"></div>
         <div id="question"></div>
         <div class="row justify-content-center">
           <div class="col-md-6">
@@ -28,19 +32,11 @@
 </main>
 
 <script>
-  document.addEventListener("click", enterFullscreen, { once: true });
+  // document.addEventListener("click", enterFullscreen, { once: true });
 
   var namatim = "<%= namatim %>";
   let fund = 1000000;
   let question;
-
-  // const logo = document.querySelector(".logo");
-  // const logoimg = document.querySelector("#logo");
-
-  // logo.style.marginTop = "-50px";
-  // logo.style.maxWidth = "250px";
-  // logoimg.style.width = "200px";
-  // logoimg.style.height = "107px";
 
   const formatter = new Intl.NumberFormat("en-SG", {
     style: "currency",
@@ -50,33 +46,38 @@
 
   document.getElementById(
     "credit"
-  ).innerHTML = `Congratulations! You've got<br><br> <h1 style="font-weight: 650; font-size: 50px;">S${formatter.format(
+  ).innerHTML = `<p class="text-white">Congratulations! You've got</p><br> <h1 style="font-weight: 650; font-size: 50px; color: #38D200;
+">S${formatter.format(
     fund
-  )} </h1><br>Initial Balance`;
+  )} </h1><br><p class="text-white">Initial Balance</p>`;
 
-  const socket = io("http://localhost:3000", {
+  const socket = io("http://192.168.88.116:3000", {
     query: {
       userId: namatim, // ID tetap
       role: "user",
     },
   });
 
-  function enterFullscreen() {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((err) => {
-        console.warn("Fullscreen request failed:", err);
-      });
-    }
-  }
+  // function enterFullscreen() {
+  //   if (!document.fullscreenElement) {
+  //     document.documentElement.requestFullscreen().catch((err) => {
+  //       console.warn("Fullscreen request failed:", err);
+  //     });
+  //   }
+  // }
 
   const submitAnswer = (i) => {
     const optionsDiv = document.getElementById("options");
 
-    let btn = optionsDiv.querySelectorAll("*");
+    let btn = optionsDiv.querySelectorAll("button");
 
     btn.forEach((button) => {
       button.classList.add("disabled");
     });
+
+    const selectedBtn = event.target;
+    selectedBtn.classList.remove("btn-secondary");
+    selectedBtn.classList.add("btn-light", "text-primary", "border-primary");
 
     fund += fund * (i / 100);
     console.log(
@@ -84,7 +85,7 @@
         fund
       )} (calculated from ${i}% adjustment)`
     );
-
+    socket.emit("vote", { teamName: namatim, option: i });
     socket.emit("updatefund", { teamName: namatim, amount: fund });
   };
 
@@ -93,9 +94,14 @@
   });
 
   socket.on("question", (data) => {
+    const questionIndexDiv = document.getElementById("questionIndex");
     const questionDiv = document.getElementById("question");
+
+    questionIndexDiv.innerText = `(QUESTION : ${data.id})`;
+    questionIndexDiv.classList.add("h3", "text-white", "text-center");
+
     questionDiv.innerText = data.question;
-    questionDiv.classList.add("h2", "text-center");
+    questionDiv.classList.add("h2", "text-center", "text-white");
 
     question = data;
 
@@ -135,7 +141,7 @@
     quizElement.style.display = "none";
     endElement.style.display = "block";
 
-    congratsElement.classList.add("h2", "text-center");
+    congratsElement.classList.add("h2", "text-center", "text-white");
     congratsElement.innerText = `Quiz was ended, your final fund is S${formatter.format(
       fund
     )}`;
@@ -178,6 +184,11 @@
 
     updateTimer();
   };
+
+  socket.on("resetData", () => {
+    console.log("reset wait quiz");
+    window.location.href = "http://192.168.88.116:3000/";
+  });
 </script>
 
 <%- include('../partials/footer') %>

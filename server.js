@@ -50,10 +50,11 @@ app.use(HostRouter);
 
 const admins = {};
 let users = {};
-
+let hosts = {};
+let votes = {};
 let questions = [];
 try {
-  questions = JSON.parse(fs.readFileSync("data.json", "utf-8"));
+  questions = JSON.parse(fs.readFileSync("question1.json", "utf-8"));
 } catch (error) {
   console.error("Error reading questions:", error);
 }
@@ -74,6 +75,11 @@ io.on("connection", (socket) => {
     console.log(`Admin ${userId} connected with socket ${socket.id}`);
   }
 
+  if (role === "host") {
+    hosts[userId] = socket.id;
+    console.log(`Host ${userId} connected with socket ${socket.id}`);
+  }
+
   socket.on("getQuestion", (index) => {
     if (index < questions.length) {
       io.emit("question", questions[index]);
@@ -89,6 +95,14 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("vote", ({ teamName, option }) => {
+    // Tambahkan atau perbarui jumlah vote
+    votes[option] = (votes[option] || 0) + 1;
+
+    // Kirim pembaruan jumlah vote ke semua client
+    io.emit("updateVotes", votes);
+  });
+
   socket.on("updatefund", ({ teamName, amount }) => {
     if (users[teamName]) {
       // users[teamName].fund += amount;
@@ -102,6 +116,17 @@ io.on("connection", (socket) => {
     console.log("Admin has started the quiz");
     io.emit("quizStarted");
     console.log("Event quizStarted dikirim ke semua klien");
+  });
+
+  socket.on("reset", () => {
+    // Reset data
+    users = {};
+    votes = {};
+
+    // Reset semua client ke tampilan awal
+    io.emit("resetData");
+
+    console.log("Quiz has been reset to the initial state.");
   });
 
   socket.on("disconnect", () => {
@@ -120,5 +145,5 @@ io.on("connection", (socket) => {
 
 // Jalankan server
 server.listen(PORT, () => {
-  console.log(`Server berjalan di http://localhost:${PORT}`);
+  console.log(`Server berjalan di http://192.168.88.116:${PORT}`);
 });
