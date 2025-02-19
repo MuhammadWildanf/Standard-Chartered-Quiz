@@ -13,17 +13,16 @@
     </button>
     <button
       type="button"
-      class="btn btn-danger reset"
-      style="border-radius: 50px"
-      onclick="reset()"
+      class="btn btn-success text-white NextQuestion"
+      style="border-radius: 50px; display: none;"
+      onclick="NextQuestion()"
     >
-      Reset Quiz
+      Next Question
     </button>
     <div class="w-75 mt-3">
       <h2 class="text-center text-white">Team Lists</h2>
       <p class="total-join text-white text-center fs-4">
-        <span id="joined-count" class="fw-bold fs-3">0</span> / 30
-        Teams Joined
+        <span id="joined-count" class="fw-bold fs-3">0</span> / 30 Teams Joined
       </p>
       <div id="list-tim" class="row g-3 justify-content-center"></div>
     </div>
@@ -65,7 +64,6 @@
     }, 10);
   }
 
-  // Menghapus tim saat keluar
   socket.on("TeamLeave", (namatim) => {
     console.log(`${namatim} left`);
     const listTim = document.getElementById("list-tim");
@@ -100,11 +98,8 @@
       .catch((error) => console.error("Error:", error));
   });
 
-  socket.on("question", (data) => {
-    let duration = data.durations;
-    const timer = document.querySelector(".timer");
-
-    startTimer(duration, timer);
+  socket.on("startFailed", (message) => {
+    alert(message);
   });
 
   socket.on("updateTeams", (Teams) => {
@@ -123,6 +118,9 @@
       1000
     );
 
+    const startBtn = document.querySelector(".start");
+    startBtn.disabled = joinedTeams < 30;
+
     for (let id in Teams) {
       const div = document.createElement("div");
       const fund = formatter.format(Teams[id].fund);
@@ -133,47 +131,28 @@
     }
   });
 
-  // socket.on("resetData" , () => {
-  //   const startBtn = document.querySelector(".start");
-  //   startBtn.style.display = "block";
-
-  //   const listTim = document.getElementById("list-tim");
-  //   listTim.innerHTML = ""; // Clear team list
-  // })
-
   const startQuiz = () => {
-    socket.emit("startQuiz");
+    const joinedCountElement = document.getElementById("joined-count");
+    let joinedTeams = Number(joinedCountElement.textContent);
 
+    if (joinedTeams < 30) {
+      alert("Belum cukup tim! Minimal 30 tim harus bergabung untuk memulai.");
+      return;
+    }
+
+    socket.emit("startQuiz");
     const startBtn = document.querySelector(".start");
     startBtn.style.display = "none";
-
     StartQuestion(currentIndex);
   };
 
-  const reset = () => {
-    if (confirm("Are you sure you want to reset the quiz?")) {
-      socket.emit("reset");
-    }
-  };
+  socket.on("quizStarted", () => {
+    document.querySelector(".NextQuestion").style.display = "inline-block";
+  });
 
-  const startTimer = (duration, timer) => {
-    let waktu = duration;
-
-    const updateTimer = () => {
-      timer.textContent = waktu;
-      if (waktu <= 0) {
-        clearInterval(timerr);
-        timer.textContent = "Time's Up!";
-        currentIndex += 1;
-        console.log(`index  ${currentIndex} saat ini`);
-        StartQuestion(currentIndex);
-      }
-      waktu--;
-    };
-
-    let timerr = setInterval(updateTimer, 1000);
-
-    updateTimer();
+  const NextQuestion = () => {
+    currentIndex++;
+    StartQuestion(currentIndex);
   };
 </script>
 

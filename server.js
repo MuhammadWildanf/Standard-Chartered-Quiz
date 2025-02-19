@@ -88,6 +88,7 @@ io.on("connection", (socket) => {
       io.emit("end");
     }
   });
+
   socket.on("getQuestionInleaderboard", (index) => {
     if (index < questions.length) {
       io.emit("questioninLeaderboard", questions[index]);
@@ -114,22 +115,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("startQuiz", () => {
-    console.log("Admin has started the quiz");
+    if (Object.keys(users).length < 30) {
+      socket.emit("startFailed", "Minimal 30 tim harus bergabung.");
+      console.log("Tidak cukup tim untuk memulai kuis.");
+      return;
+    }
+  
+    console.log("Quiz Started!");
     io.emit("quizStarted");
-    console.log("Event quizStarted dikirim ke semua klien");
-  });
-
-  socket.on("reset", () => {
-    // Reset data
-    users = {};
-    hosts = {};
-    votes = {};
-    questions = [];
-
-    // Reset semua client ke tampilan awal
-    io.emit("resetData");
-
-    console.log("Quiz has been reset to the initial state.");
   });
 
   socket.on("disconnect", () => {
@@ -144,6 +137,7 @@ io.on("connection", (socket) => {
       }
     }
   });
+
 });
 
 // Jalankan server

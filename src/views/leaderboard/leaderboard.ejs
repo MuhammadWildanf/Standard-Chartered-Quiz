@@ -10,12 +10,23 @@
           </p>
         </div>
         <div class="col-md-6">
-          <h2 class="text-center text-white">Welcome Team</h2>
-          <div id="list-tim-join" class="row g-3 justify-content-center"></div>
+          <div class="card">
+            <div class="card-title">
+              <h3 class="text-center">Welcome Team</h3>
+            </div>
+            <div class="card-body">
+              <div id="seat-container" class="row g-2"></div>
+              <p class="total-join text-center fs-4 mt-3">
+                <span id="joined-count" class="fw-bold fs-3">0</span> / 30 Teams
+                Joined
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
     <section class="quiz">
+      <div id="questionIndex" class="text-white"></div>
       <div id="question" class="text-center h2 text-white"></div>
       <div class="row justify-content-center">
         <div class="col-md-6">
@@ -45,9 +56,27 @@
 <script>
   let question;
   let currentIndex = 0;
-  const nextQuestion = (idx) => {
-    socket.emit("getQuestion", idx);
-  };
+  const maxSeats = 30;
+  const seatsPerRow = 3;
+  const seatContainer = document.getElementById("seat-container");
+
+  for (let i = 0; i < maxSeats; i++) {
+    if (i % seatsPerRow === 0) {
+      // Buat baris baru setiap 3 kursi
+      const row = document.createElement("div");
+      row.className = "row justify-content-center g-2";
+      seatContainer.appendChild(row);
+    }
+
+    const seat = document.createElement("div");
+    seat.className = "col-md-4 text-center seat"; // 3 kolom per baris
+    seat.setAttribute("data-index", i);
+    seat.innerHTML = `<div class="p-3 border rounded border-success text-success bg-white seat-box fw-bold" style="font-size: 16px;">Team ${
+      i + 1
+    }</div>`;
+
+    seatContainer.lastChild.appendChild(seat);
+  }
 
   const socket = io("http://localhost:3000", {
     query: {
@@ -77,6 +106,10 @@
 
   socket.on("questioninLeaderboard", (data) => {
     document.querySelector(".wait").style.display = "none";
+    const questionIndexDiv = document.getElementById("questionIndex");
+    questionIndexDiv.innerText = `(QUESTION : ${data.id})`;
+    questionIndexDiv.classList.add("h3", "text-center");
+
     document.getElementById("question").innerText = data.question;
     const optionsDiv = document.getElementById("options");
     optionsDiv.innerHTML = "";
@@ -108,6 +141,32 @@
   });
 
   socket.on("updateTeams", (Teams) => {
+    console.log("Updated teams:", Teams);
+
+    const seats = document.querySelectorAll(".seat-box");
+
+    // Reset semua kursi ke warna putih
+    seats.forEach((seat, index) => {
+      // seat.innerText = index + 1;
+      seat.classList.remove("bg-primary", "text-white");
+      seat.classList.add("bg-white");
+    });
+
+    // Update kursi sesuai tim yang telah bergabung
+    Object.values(Teams).forEach((team, index) => {
+      if (index < maxSeats) {
+        seats[index].innerText = team.name;
+        seats[index].classList.remove("bg-white");
+        seats[index].classList.add("bg-primary", "text-white");
+      }
+    });
+
+    // Update jumlah tim yang telah join
+    document.getElementById("joined-count").innerText =
+      Object.keys(Teams).length;
+  });
+
+  socket.on("updateTeams", (Teams) => {
     const listTim = document.getElementById("list-tim");
     listTim.innerHTML = "";
     Object.values(Teams)
@@ -119,35 +178,6 @@
       <td>${team.fund.toLocaleString("id-ID")}</td>
     </tr>`;
       });
-  });
-
-  socket.on("updateTeams", (Teams) => {
-    console.log("Updated teams:", Teams);
-    const listTim = document.getElementById("list-tim-join");
-    listTim.innerHTML = "";
-
-    for (let id in Teams) {
-      const div = document.createElement("div");
-      div.className = "col-md-4 text-center p-2";
-      div.setAttribute("data-team", Teams[id].name);
-      div.innerHTML = `<div class="p-2 border rounded bg-light" style="font-weight: 600; font-size: 20px;">${Teams[id].name}</div>`;
-      listTim.appendChild(div);
-    }
-  });
-
-  socket.on("resetData", () => {
-    console.log("reset Leaderboard");
-    
-    // Reset UI elements, e.g., hide quiz and leaderboard, show waiting screen
-    document.querySelector(".quiz").style.display = "none";
-    document.querySelector(".leaderboard").style.display = "none";
-    document.querySelector(".wait").style.display = "block"; // Show waiting page again
-
-    // Clear team list or other necessary elements
-    const listTim = document.getElementById("list-tim");
-    const listTimJoin = document.getElementById("list-tim-join");
-    listTim.innerHTML = ""; // Clear team list
-    listTimJoin.innerHTML = ""; // Clear team list
   });
 </script>
 

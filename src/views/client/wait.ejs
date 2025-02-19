@@ -15,7 +15,6 @@
         <h2 id="credit"></h2>
       </section>
       <section class="quiz" style="display: none">
-        <div class="timer h2 me-4 text-center"></div>
         <div id="questionIndex"></div>
         <div id="question"></div>
         <div class="row justify-content-center">
@@ -116,11 +115,6 @@
       // Tambahkan tombol ke dalam optionsDiv
       optionsDiv.appendChild(btn);
     });
-
-    let duration = data.durations;
-    const timer = document.querySelector(".timer");
-
-    startTimer(duration, timer);
   });
 
   socket.on("end", () => {
@@ -158,27 +152,6 @@
     }
   });
 
-  const startTimer = (duration, timer) => {
-    let waktu = duration;
-
-    const updateTimer = () => {
-      timer.textContent = waktu;
-      if (waktu <= 0) {
-        clearInterval(timerr);
-        timer.textContent = "Time's Up!";
-      }
-      waktu--;
-    };
-
-    let timerr = setInterval(updateTimer, 1000);
-
-    updateTimer();
-  };
-
-  socket.on("resetData", () => {
-    console.log("reset wait quiz");
-    window.location.href = "http://localhost:3000/";
-  });
 </script>
 
 <%- include('../partials/client/footer') %>
