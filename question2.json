@@ -1,0 +1,39 @@
+[
+  {
+    "id": 1,
+    "question": "From 2005 to end 2022 which was the best performing asset class ?",
+    "options": [
+      {
+        "text": "Global Equities"
+      },
+      {
+        "text": "Private Credit"
+      },
+      {
+        "text": "Gold"
+      }
+    ],
+    "answers": "Private Credit",
+    "durations": 10
+  },
+  {
+    "id": 2,
+    "question": "If you were to invest in the Balanced Portfolio option in all 4 period, what do you think the returns will be.",
+    "options": [
+      {
+        "text": "18.2%"
+      },
+      {
+        "text": "13.7%"
+      },
+      {
+        "text": "5.3%"
+      },
+      {
+        "text": "-6.7%"
+      }
+    ],
+    "answers": "13.7%",
+    "durations": 10
+  }
+]

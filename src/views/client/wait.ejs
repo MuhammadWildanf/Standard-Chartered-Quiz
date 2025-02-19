@@ -1,4 +1,4 @@
-<%- include('../partials/header') %>
+<%- include('../partials/client/header') %>
 <main>
   <div
     class="wrapper d-flex align-items-center justify-content-center"
@@ -9,13 +9,13 @@
       style="margin-top: -140px"
     >
       <section class="wait text-center">
-        <h2 class="text-white">
+        <h2>
           Welcome, Tim <strong><%= namatim %>,</strong>
         </h2>
-        <h2 id="credit" class="text-white"></h2>
+        <h2 id="credit"></h2>
       </section>
       <section class="quiz" style="display: none">
-        <div class="timer h2 me-4 text-white text-center"></div>
+        <div class="timer h2 me-4 text-center"></div>
         <div id="questionIndex"></div>
         <div id="question"></div>
         <div class="row justify-content-center">
@@ -32,8 +32,6 @@
 </main>
 
 <script>
-  // document.addEventListener("click", enterFullscreen, { once: true });
-
   var namatim = "<%= namatim %>";
   let fund = 1000000;
   let question;
@@ -46,25 +44,17 @@
 
   document.getElementById(
     "credit"
-  ).innerHTML = `<p class="text-white">Congratulations! You've got</p><br> <h1 style="font-weight: 650; font-size: 50px; color: #38D200;
-">S${formatter.format(
+  ).innerHTML = `<p>Congratulations! You've got</p><br> <h1 style="font-weight: 650; font-size: 50px; color: #38D200;
+"><strong>S${formatter.format(
     fund
-  )} </h1><br><p class="text-white">Initial Balance</p>`;
+  )}</strong> </h1><br><p>Initial Balance</p>`;
 
-  const socket = io("http://192.168.88.116:3000", {
+  const socket = io("http://localhost:3000", {
     query: {
       userId: namatim, // ID tetap
       role: "user",
     },
   });
-
-  // function enterFullscreen() {
-  //   if (!document.fullscreenElement) {
-  //     document.documentElement.requestFullscreen().catch((err) => {
-  //       console.warn("Fullscreen request failed:", err);
-  //     });
-  //   }
-  // }
 
   const submitAnswer = (i) => {
     const optionsDiv = document.getElementById("options");
@@ -98,10 +88,10 @@
     const questionDiv = document.getElementById("question");
 
     questionIndexDiv.innerText = `(QUESTION : ${data.id})`;
-    questionIndexDiv.classList.add("h3", "text-white", "text-center");
+    questionIndexDiv.classList.add("h3", "text-center");
 
     questionDiv.innerText = data.question;
-    questionDiv.classList.add("h2", "text-center", "text-white");
+    questionDiv.classList.add("h2", "text-center");
 
     question = data;
 
@@ -141,7 +131,7 @@
     quizElement.style.display = "none";
     endElement.style.display = "block";
 
-    congratsElement.classList.add("h2", "text-center", "text-white");
+    congratsElement.classList.add("h2", "text-center");
     congratsElement.innerText = `Quiz was ended, your final fund is S${formatter.format(
       fund
     )}`;
@@ -187,8 +177,8 @@
 
   socket.on("resetData", () => {
     console.log("reset wait quiz");
-    window.location.href = "http://192.168.88.116:3000/";
+    window.location.href = "http://localhost:3000/";
   });
 </script>
 
-<%- include('../partials/footer') %>
+<%- include('../partials/client/footer') %>

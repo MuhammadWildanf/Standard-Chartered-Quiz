@@ -17,6 +17,7 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 3000;
+const URL = process.env.URL;
 
 // Mengizinkan koneksi dari client (misalnya React, Vue, atau Angular)
 const io = new Server(server, {
@@ -121,7 +122,9 @@ io.on("connection", (socket) => {
   socket.on("reset", () => {
     // Reset data
     users = {};
+    hosts = {};
     votes = {};
+    questions = [];
 
     // Reset semua client ke tampilan awal
     io.emit("resetData");
@@ -145,5 +148,5 @@ io.on("connection", (socket) => {
 
 // Jalankan server
 server.listen(PORT, () => {
-  console.log(`Server berjalan di http://192.168.88.116:${PORT}`);
+  console.log(`Server berjalan di http://localhost:${PORT}`);
 });

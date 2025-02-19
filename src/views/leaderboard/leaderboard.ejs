@@ -1,4 +1,4 @@
-<%- include('../partials/header') %>
+<%- include('../partials/led/header') %>
 <main>
   <div class="container mt-5">
     <section class="wait">
@@ -49,7 +49,7 @@
     socket.emit("getQuestion", idx);
   };
 
-  const socket = io("http://192.168.88.116:3000", {
+  const socket = io("http://localhost:3000", {
     query: {
       userId: "host", // ID tetap
       role: "host",
@@ -151,4 +151,4 @@
   });
 </script>
 
-<%- include('../partials/footer') %>
+<%- include('../partials/led/footer') %>

@@ -1,0 +1,52 @@
+  /* Layout Flexbox untuk Sticky Footer */
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(90deg, #2C3A85 0%, #0061C5 100%)
+  }
+
+  /* Konten utama agar fleksibel */
+  main {
+    flex: 1;
+  }
+
+  /* Border Header & Footer */
+  .logo {
+    margin-top: -10px;
+  }
+
+
+  /* Kelas untuk tombol yang dipilih */
+.selected {
+  background-color: #4CAF50; /* Ganti dengan warna yang diinginkan */
+  color: white;
+}
+
+/* Kelas untuk tombol yang dinonaktifkan */
+.disabled {
+  background-color: #f0f0f0;
+  color: #ccc;
+}
+
+
+.total-join {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  margin-top: 10px;
+}
+
+.progress {
+  background-color: #343a40; /* Warna dark untuk progress bar */
+  border-radius: 50px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  font-weight: bold;
+  font-size: 16px;
+}
+

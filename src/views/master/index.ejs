@@ -1,4 +1,4 @@
-<%- include('../partials/header') %>
+<%- include('../partials/master/header') %>
 <main>
   <div class="container d-flex flex-column align-items-center mt-5 gap-3">
     <h1 class="text-white">Get Ready for Portfolio Game</h1>
@@ -9,7 +9,7 @@
       style="border-radius: 50px"
       onclick="startQuiz()"
     >
-      Next Question
+      Start Question
     </button>
     <button
       type="button"
@@ -21,6 +21,10 @@
     </button>
     <div class="w-75 mt-3">
       <h2 class="text-center text-white">Team Lists</h2>
+      <p class="total-join text-white text-center fs-4">
+        <span id="joined-count" class="fw-bold fs-3">0</span> / 30
+        Teams Joined
+      </p>
       <div id="list-tim" class="row g-3 justify-content-center"></div>
     </div>
   </div>
@@ -28,12 +32,12 @@
 
 <script>
   let currentIndex = 0;
-  const nextQuestion = (idx) => {
+  const StartQuestion = (idx) => {
     socket.emit("getQuestion", idx);
     socket.emit("getQuestionInleaderboard", idx);
   };
 
-  const socket = io("http://192.168.88.116:3000", {
+  const socket = io("http://localhost:3000", {
     query: {
       userId: "admin123", // ID tetap
       role: "admin",
@@ -46,6 +50,21 @@
     currencyDisplay: "symbol",
   });
 
+  function animateCount(element, start, end, duration) {
+    let range = end - start;
+    let current = start;
+    let increment = range / (duration / 10);
+
+    let timer = setInterval(() => {
+      current += increment;
+      if (current >= end) {
+        clearInterval(timer);
+        current = end;
+      }
+      element.textContent = Math.floor(current);
+    }, 10);
+  }
+
   // Menghapus tim saat keluar
   socket.on("TeamLeave", (namatim) => {
     console.log(`${namatim} left`);
@@ -56,6 +75,18 @@
     if (itemToRemove) {
       listTim.removeChild(itemToRemove);
     }
+
+    // Update jumlah tim yang join
+    let joinedCountElement = document.getElementById("joined-count");
+    let joinedTeams = Number(joinedCountElement.textContent) - 1; // Kurangi 1 karena ada tim keluar
+    joinedTeams = Math.max(joinedTeams, 0); // Pastikan tidak negatif
+
+    animateCount(
+      joinedCountElement,
+      Number(joinedCountElement.textContent),
+      joinedTeams,
+      1000
+    );
 
     fetch("/updatetim", {
       method: "POST",
@@ -81,6 +112,17 @@
     const listTim = document.getElementById("list-tim");
     listTim.innerHTML = "";
 
+    let totalTeams = 30;
+    let joinedTeams = Object.keys(Teams).length;
+    let joinedCountElement = document.getElementById("joined-count");
+
+    animateCount(
+      joinedCountElement,
+      Number(joinedCountElement.textContent),
+      joinedTeams,
+      1000
+    );
+
     for (let id in Teams) {
       const div = document.createElement("div");
       const fund = formatter.format(Teams[id].fund);
@@ -91,13 +133,13 @@
     }
   });
 
-  socket.on("resetData" , () => {
-    const startBtn = document.querySelector(".start");
-    startBtn.style.display = "block";
+  // socket.on("resetData" , () => {
+  //   const startBtn = document.querySelector(".start");
+  //   startBtn.style.display = "block";
 
-    const listTim = document.getElementById("list-tim");
-    listTim.innerHTML = ""; // Clear team list
-  })
+  //   const listTim = document.getElementById("list-tim");
+  //   listTim.innerHTML = ""; // Clear team list
+  // })
 
   const startQuiz = () => {
     socket.emit("startQuiz");
@@ -105,7 +147,7 @@
     const startBtn = document.querySelector(".start");
     startBtn.style.display = "none";
 
-    nextQuestion(currentIndex);
+    StartQuestion(currentIndex);
   };
 
   const reset = () => {
@@ -124,7 +166,7 @@
         timer.textContent = "Time's Up!";
         currentIndex += 1;
         console.log(`index  ${currentIndex} saat ini`);
-        nextQuestion(currentIndex);
+        StartQuestion(currentIndex);
       }
       waktu--;
     };
@@ -135,4 +177,4 @@
   };
 </script>
 
-<%- include('../partials/footer') %>
+<%- include('../partials/master/footer') %>
