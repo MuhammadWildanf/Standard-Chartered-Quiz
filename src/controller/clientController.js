@@ -1,3 +1,5 @@
+import { teamNames } from "../../globalState.js"; // Import dari file yang sama dengan server.js
+
 export const home = (req, res) => {
   res.render("client/form.ejs", { title: "Client" });
 };
@@ -11,8 +13,7 @@ export const quiz = (req, res) => {
   res.render("client/wait.ejs", { title: "Quiz", namatim: name });
 };
 
-const teamNames = new Set();
-export const teamName = (req, res) => {
+export const validateTeamName = (req, res, next) => {
   const { teamName } = req.body;
 
   if (!teamName) {
@@ -29,13 +30,20 @@ export const teamName = (req, res) => {
     });
   }
 
-  teamNames.add(teamName); // Simpan nama tim
-  req.session.teamName = teamName; // Simpan di session
+  next(); // Lanjut ke handler berikutnya
+};
+
+export const teamName = (req, res) => {
+  const { teamName } = req.body;
+
+  teamNames.add(teamName);
+  req.session.teamName = teamName;
   res.redirect(`/quiz/${teamName}`);
 };
 
-export const updateTeams = (req, res) => {
-  const { teamName } = req.body
 
-  teamNames.delete(teamName)
-}
+export const updateTeams = (req, res) => {
+  const { teamName } = req.body;
+
+  teamNames.delete(teamName);
+};

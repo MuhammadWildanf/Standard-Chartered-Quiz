@@ -10,16 +10,21 @@
           </p>
         </div>
         <div class="col-md-6">
-          <div class="card">
-            <div class="card-title">
-              <h3 class="text-center">Welcome Team</h3>
-            </div>
-            <div class="card-body">
-              <div id="seat-container" class="row g-2"></div>
-              <p class="total-join text-center fs-4 mt-3">
-                <span id="joined-count" class="fw-bold fs-3">0</span> / 30 Teams
-                Joined
-              </p>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card rounded p-1">
+                <div class="card-body p-2">
+                  <h5 class="text-center text-sm mt-1">Welcome Team</h5>
+
+                  <div id="seat-container" class="row g-1"></div>
+                  <!-- Mengurangi gutter -->
+                  <p class="total-join text-center fs-6 mt-1">
+                    <!-- Mengurangi ukuran font -->
+                    <span id="joined-count" class="fw-bold fs-5">0</span> / 30
+                    Teams Joined
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -30,22 +35,47 @@
       <div id="question" class="text-center h2 text-white"></div>
       <div class="row justify-content-center">
         <div class="col-md-6">
-          <div id="options" class="row mt-3"></div>
+          <div id="options"></div>
         </div>
+      </div>
+      <div class="fund mt-5">
+        <h3 class="text-white">The Team Has Answered</h3>
+        <h2 class="fund-box" id="total-votes">0</h2>
       </div>
     </section>
     <section class="leaderboard" style="display: none">
       <div class="row justify-content-center">
         <div class="col-md-8">
           <h1 class="text-white">Leaderboard</h1>
-          <div class="card shadow rounded">
-            <div class="card-body">
-              <div class="table-responsif mt-3">
-                <table class="table">
-                  <tbody id="list-tim"></tbody>
-                </table>
-              </div>
-            </div>
+          <div class="table-responsif mt-3">
+            <table class="table">
+              <tbody id="list-tim"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="tieBreakerQuiz" style="display: none">
+      <div id="questionIndexTie" class="text-white"></div>
+      <div id="questionTie" class="text-center h2 text-white"></div>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div id="optionsTie" class="row mt-3"></div>
+        </div>
+      </div>
+      <div class="fundTie mt-5">
+        <h3 class="text-white">The Team Has Answered</h3>
+        <h2 class="fund-boxTie" id="total-votesTie">0</h2>
+      </div>
+    </section>
+    <section class="newleaderboard" style="display: none">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <h1 class="text-white">Leaderboard</h1>
+          <div class="table-responsif mt-3">
+            <table class="table">
+              <tbody id="list-tie-breaker"></tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -69,9 +99,9 @@
     }
 
     const seat = document.createElement("div");
-    seat.className = "col-md-4 text-center seat"; // 3 kolom per baris
+    seat.className = "col-4 text-center seat"; // 3 kolom per baris
     seat.setAttribute("data-index", i);
-    seat.innerHTML = `<div class="p-3 border rounded border-success text-success bg-white seat-box fw-bold" style="font-size: 16px;">Team ${
+    seat.innerHTML = `<div class="p-3 border rounded-pill border-success bg-white seat-box fw-bold" style="font-size: 16px;">Team ${
       i + 1
     }</div>`;
 
@@ -83,6 +113,13 @@
       userId: "host", // ID tetap
       role: "host",
     },
+  });
+
+  console.log("Menunggu event gameReset...");
+  socket.on("gameReset", () => {
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   });
 
   const formatter = new Intl.NumberFormat("en-SG", {
@@ -104,7 +141,13 @@
       .catch((error) => console.error("Error:", error));
   });
 
+  // start first quiz leaderboard
+
+  let votes = {};
+
   socket.on("questioninLeaderboard", (data) => {
+    votes = {}; // Reset votes di frontend
+    document.getElementById("total-votes").innerText = "0"; // Reset total votes tampilan
     document.querySelector(".wait").style.display = "none";
     const questionIndexDiv = document.getElementById("questionIndex");
     questionIndexDiv.innerText = `(QUESTION : ${data.id})`;
@@ -113,19 +156,25 @@
     document.getElementById("question").innerText = data.question;
     const optionsDiv = document.getElementById("options");
     optionsDiv.innerHTML = "";
+    optionsDiv.classList.add(
+      "d-flex",
+      "flex-column",
+      "gap-3",
+      "align-items-stretch",
+      "mt-3"
+    );
 
     data.options.forEach((opt) => {
-      const optionCard = document.createElement("div");
-      optionCard.className = "col-md-6 mb-2";
-      optionCard.innerHTML = `
-      <div class="card">
-        <div class="card-body text-center">
-          <h5>${opt.text}</h5>
-          <div id="votes-${opt.value}" class="mt-2 text-success">Votes: 0</div>
-        </div>
-      </div>`;
-      optionsDiv.appendChild(optionCard);
+      const optionbtn = document.createElement("div");
+      optionbtn.innerHTML = `
+       <button class="btn btn-primary w-100 rounded-pill" id="option-${opt.value}">
+      <span>${opt.text}</span>
+      <small id="votes-${opt.value}" class="text-white mt-1">Votes: 0</small>
+    </button>
+      `;
+      optionsDiv.appendChild(optionbtn);
     });
+    socket.emit("resetVotes");
   });
 
   socket.on("updateVotes", (votes) => {
@@ -133,6 +182,10 @@
       const voteElem = document.getElementById(`votes-${optionValue}`);
       if (voteElem) voteElem.innerText = `Votes: ${count}`;
     });
+  });
+
+  socket.on("totalVotes", (total) => {
+    document.getElementById("total-votes").innerText = total;
   });
 
   socket.on("endinLeaderboard", () => {
@@ -172,11 +225,67 @@
     Object.values(Teams)
       .sort((a, b) => b.fund - a.fund)
       .forEach((team, index) => {
-        listTim.innerHTML += `<tr>
-      <td>${index + 1}</td>
-      <td>${team.name}</td>
-      <td>${team.fund.toLocaleString("id-ID")}</td>
-    </tr>`;
+        const rowClass = index < 5 ? "custom-green" : "custom-blue"; // 5 teratas hijau, lainnya biru
+        const row = document.createElement("tr");
+        row.classList.add(rowClass);
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${team.name}</td>
+          <td>${team.fund.toLocaleString("id-ID")}</td>
+        `;
+        listTim.appendChild(row);
+      });
+  });
+
+  // end first quiz leaderboard
+
+  socket.on("questionTieinLeaderboard", (data) => {
+    console.log("Menerima pertanyaan tie-breaker:", data);
+    votes = {}; // Reset votes di frontend
+    document.getElementById("total-votesTie").innerText = "0"; // Reset total votes tampilan
+    document.querySelector(".leaderboard").style.display = "none";
+    document.querySelector(".tieBreakerQuiz").style.display = "block";
+    const questionTieIndexDiv = document.getElementById("questionIndexTie");
+    questionTieIndexDiv.innerText = `(QUESTION : ${data.id})`;
+    questionTieIndexDiv.classList.add("h3", "text-center");
+
+    document.getElementById("questionTie").innerText = data.question;
+    const optionsTieDiv = document.getElementById("optionsTie");
+    optionsTieDiv.innerHTML = "";
+
+    data.options.forEach((opt) => {
+      const optionTieCard = document.createElement("div");
+      optionTieCard.className = "col-md-6 mb-2";
+      optionTieCard.innerHTML = `
+      <div class="card">
+        <div class="card-body text-center">
+          <h5>${opt.text}</h5>
+          <div id="votes-${opt.value}" class="mt-2 text-success">Votes: 0</div>
+        </div>
+      </div>`;
+      optionsTieDiv.appendChild(optionTieCard);
+    });
+    socket.emit("resetVotes");
+  });
+
+  socket.on("endTieinLeaderboard", () => {
+    document.querySelector(".tieBreakerQuiz").style.display = "none";
+    document.querySelector(".newleaderboard").style.display = "block";
+  });
+
+  socket.on("updateTeams", (Teams) => {
+    const listFinalTim = document.getElementById("list-tie-breaker");
+    listFinalTim.innerHTML = "";
+    Object.values(Teams)
+      .sort((a, b) => b.fund - a.fund)
+      .forEach((team, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${team.name}</td>
+          <td>${team.fund.toLocaleString("id-ID")}</td>
+        `;
+        listFinalTim.appendChild(row);
       });
   });
 </script>

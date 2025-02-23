@@ -1,0 +1,1 @@
+export const teamNames = new Set();

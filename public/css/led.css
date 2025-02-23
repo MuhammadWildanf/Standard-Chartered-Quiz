@@ -19,21 +19,76 @@
 
 
   /* Kelas untuk tombol yang dipilih */
-.selected {
-  background-color: #4CAF50; /* Ganti dengan warna yang diinginkan */
-  color: white;
-}
+  .selected {
+    background-color: #4CAF50;
+    /* Ganti dengan warna yang diinginkan */
+    color: white;
+  }
 
-/* Kelas untuk tombol yang dinonaktifkan */
-.disabled {
-  background-color: #f0f0f0;
-  color: #ccc;
-}
+  /* Kelas untuk tombol yang dinonaktifkan */
+  .disabled {
+    background-color: #f0f0f0;
+    color: #ccc;
+  }
 
-.seat-box {
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s ease-in-out;
-}
+  .custom-green td,
+  .custom-green th {
+    background-color: #38D200 !important;
+    color: white !important;
+  }
+
+  .custom-blue td,
+  .custom-blue th {
+    background-color: #0473EA !important;
+    color: white !important;
+  }
+
+  .custom-green:first-child td:first-child,
+  .custom-blue:first-child td:first-child {
+    border-top-left-radius: 10px;
+  }
+
+  .custom-green:first-child td:last-child,
+  .custom-blue:first-child td:last-child {
+    border-top-right-radius: 10px;
+  }
+
+  .custom-green:last-child td:first-child,
+  .custom-blue:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+  }
+
+  .custom-green:last-child td:last-child,
+  .custom-blue:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+  }
+
+
+  .fund {
+    display: flex;
+    flex-direction: column; /* Susun elemen secara vertikal */
+    align-items: center; /* Pusatkan horizontal */
+    gap: 8px; /* Beri jarak antara teks dan fund-box */
+  }
+  
+  .fund-box {
+    background-color: #38D200; /* Warna hijau */
+    color: white; /* Teks putih */
+    width: 189.1px; /* Lebar */
+    height: 36px; /* Tinggi */
+    display: flex;
+    justify-content: center; /* Pusatkan horizontal */
+    align-items: center; /* Pusatkan vertikal */
+    border-radius: 20px; /* Sudut melengkung */
+    font-size: 18px; /* Ukuran teks */
+    font-weight: bold;
+    text-align: center; /* Pastikan teks rata tengah */
+  }
+
+  .seat-box {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease-in-out;
+  }

@@ -5,17 +5,19 @@
     style="height: 85vh"
   >
     <div
-      class="container d-flex flex-column align-items-center"
+      class="d-flex flex-column align-items-center"
       style="margin-top: -140px"
     >
       <section class="wait text-center">
-        <h2>
-          Welcome, Tim <strong><%= namatim %>,</strong>
-        </h2>
+        <h2>Welcome, Tim <strong><%= namatim %>,</strong></h2>
         <h2 id="credit"></h2>
       </section>
       <section class="quiz" style="display: none">
-        <div id="questionIndex"></div>
+        <div class="fund mb-5">
+          <h3>Your Fund:</h3>
+          <h2 id="teamFundDisplay" class="fund-box"></h2>
+        </div>
+        <div id="questionIndex" class="mt-5"></div>
         <div id="question"></div>
         <div class="row justify-content-center">
           <div class="col-md-6">
@@ -24,6 +26,19 @@
         </div>
       </section>
       <section class="end" style="display: none">
+        <div class="congrats"></div>
+      </section>
+      <section class="tiebreaker" style="display: none">
+        <div id="timer" class="h4 text-center text-danger mt-3"></div>
+        <div id="questiontieIndex"></div>
+        <div id="questiontie"></div>
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div id="optionstie"></div>
+          </div>
+        </div>
+      </section>
+      <section class="endtie">
         <div class="congrats"></div>
       </section>
     </div>
@@ -41,12 +56,25 @@
     currencyDisplay: "symbol",
   });
 
+  // function getCurrentSection() {
+  //   const sections = document.querySelectorAll("section");
+  //   for (let section of sections) {
+  //     if (window.getComputedStyle(section).display !== "none") {
+  //       return section.classList[0]; // Mengembalikan nama class section yang aktif
+  //     }
+  //   }
+  //   return null;
+  // }
+
+  // // Contoh penggunaan
+  // setInterval(() => {
+  //   console.log("Section aktif:", getCurrentSection());
+  // }, 3000); // Mengecek setiap 3 detik
+
   document.getElementById(
     "credit"
   ).innerHTML = `<p>Congratulations! You've got</p><br> <h1 style="font-weight: 650; font-size: 50px; color: #38D200;
-"><strong>S${formatter.format(
-    fund
-  )}</strong> </h1><br><p>Initial Balance</p>`;
+"><strong>S${formatter.format(fund)}</strong> </h1><br><p>Initial Balance</p>`;
 
   const socket = io("http://localhost:3000", {
     query: {
@@ -55,7 +83,17 @@
     },
   });
 
-  const submitAnswer = (i) => {
+  console.log("Menunggu event gameReset...");
+
+  socket.on("gameReset", () => {
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  });
+
+  // start first quiz
+
+  const submitAnswer = (value, event) => {
     const optionsDiv = document.getElementById("options");
 
     let btn = optionsDiv.querySelectorAll("button");
@@ -68,21 +106,33 @@
     selectedBtn.classList.remove("btn-secondary");
     selectedBtn.classList.add("btn-light", "text-primary", "border-primary");
 
-    fund += fund * (i / 100);
+    selectedBtn.innerText += ` (${value >= 0 ? "+" : ""}${value * 100}%)`;
+    selectedBtn.classList.add(value >= 0 ? "text-green" : "text-red");
+
+    fund += fund * (value / 100);
     console.log(
       `Fund after question: S${formatter.format(
         fund
-      )} (calculated from ${i}% adjustment)`
+      )} (calculated from ${value}% adjustment)`
     );
-    socket.emit("vote", { teamName: namatim, option: i });
+    socket.emit("vote", { teamName: namatim, option: value });
     socket.emit("updatefund", { teamName: namatim, amount: fund });
   };
 
   socket.on("updateTeams", (Teams) => {
-    fund = Teams[namatim].fund;
+    if (Teams[namatim]) {
+      fund = Teams[namatim].fund;
+
+      // Update tampilan fund
+      document.getElementById(
+        "teamFundDisplay"
+      ).innerText = `S${formatter.format(fund)}`;
+    }
   });
 
   socket.on("question", (data) => {
+    console.log("question 1", data);
+
     const questionIndexDiv = document.getElementById("questionIndex");
     const questionDiv = document.getElementById("question");
 
@@ -107,10 +157,10 @@
     data.options.forEach((opt, i) => {
       const btn = document.createElement("button");
       btn.innerText = opt.text; // Ambil teks dari objek option
-      btn.onclick = () => submitAnswer(opt.value);
+      btn.onclick = () => submitAnswer(opt.value, event);
 
       // Tambahkan class Bootstrap ke tombol
-      btn.classList.add("btn", "btn-primary", "w-100");
+      btn.classList.add("btn", "btn-primary", "w-100", "rounded-pill");
 
       // Tambahkan tombol ke dalam optionsDiv
       optionsDiv.appendChild(btn);
@@ -152,6 +202,163 @@
     }
   });
 
+  // end first quiz
+
+  // start tie breaker question
+  let startTime;
+  let timerInterval;
+
+  const startTimer = (duration, questionId) => {
+    clearInterval(timerInterval);
+    let timeLeft = duration;
+
+    // Pastikan elemen timer ada
+    let timerDisplay = document.getElementById("timer");
+    if (!timerDisplay) {
+      timerDisplay = document.createElement("div");
+      timerDisplay.id = "timer";
+      timerDisplay.classList.add("text-center", "h3");
+      document.querySelector(".tiebreaker").prepend(timerDisplay);
+    }
+
+    timerDisplay.innerText = `Time left: ${timeLeft}s`;
+
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      timerDisplay.innerText = `Time left: ${timeLeft}s`;
+
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        console.log("Waktu habis!");
+        socket.emit("timeUp", { questionId, teamName: namatim });
+
+        // Nonaktifkan tombol jawaban saat waktu habis
+        const btns = document.querySelectorAll("#optionstie button");
+        btns.forEach((btn) => btn.classList.add("disabled"));
+      }
+    }, 1000);
+  };
+
+  socket.on("TiebreakerStarted", () => {
+    console.log("Event TiebreakerStartedStarted diterima!");
+    document.querySelector(".end").style.display = "none";
+    document.querySelector(".tiebreaker").style.display = "block";
+    console.log("harusnya tetap di Tiebreaker!");
+  });
+
+  socket.on("questiontie", (data) => {
+    console.log("Menerima pertanyaan tie-breaker:", data);
+    const questiontieIndexDiv = document.getElementById("questiontieIndex");
+    const questiontieDiv = document.getElementById("questiontie");
+
+    questiontieIndexDiv.innerText = `(QUESTION : ${data.id})`;
+    questiontieIndexDiv.classList.add("h3", "text-center");
+
+    questiontieDiv.innerText = data.question;
+    questiontieDiv.classList.add("h2", "text-center");
+
+    question = data;
+
+    const optionstieDiv = document.getElementById("optionstie");
+    optionstieDiv.innerHTML = "";
+    optionstieDiv.classList.add(
+      "d-flex",
+      "flex-column",
+      "gap-3",
+      "align-items-center",
+      "mt-3"
+    );
+
+    // Simpan jawaban yang benar
+    optionstieDiv.dataset.correctAnswer = data.answers;
+    startTime = Date.now();
+
+    data.options.forEach((opt, i) => {
+      const btn = document.createElement("button");
+      btn.innerText = opt.text; // Ambil teks dari objek option
+      btn.onclick = () => submitTieBreaker(opt.value, event, data.answers);
+
+      // Tambahkan class Bootstrap ke tombol
+      btn.classList.add("btn", "btn-primary", "w-100", "rounded-pill");
+
+      // Tambahkan tombol ke dalam optionsDiv
+      optionstieDiv.appendChild(btn);
+    });
+    let duration = data.durations || 10; // Default 10 detik jika tidak ada
+    startTimer(duration, data.id);
+  });
+
+  const submitTieBreaker = (value, event, correctAnswer) => {
+    // clearInterval(timerInterval);
+
+    const optionsDiv = document.getElementById("optionstie");
+    let endTime = Date.now();
+
+    let btn = optionsDiv.querySelectorAll("button");
+    btn.forEach((button) => {
+      button.classList.add("disabled");
+    });
+
+    const selectedBtn = event.target;
+    let point = 0;
+    selectedBtn.classList.remove("btn-secondary");
+    let isCorrect = value === correctAnswer;
+    let timeText = document.getElementById("timer").innerText.split(" ")[2];
+    let timeTaken = isNaN(parseInt(timeText)) ? maxTime : parseInt(timeText);
+    let maxTime = question.durations || 10; // Gunakan durasi dari JSON
+    if (value === correctAnswer) {
+      selectedBtn.classList.add("btn-success"); // Warna hijau jika benar
+      selectedBtn.innerText += " ✅ Benar";
+
+      // Perhitungan poin: 1000 - waktu (semakin cepat semakin besar)
+      point = Math.max(1000 - timeTaken * 100, 100);
+    } else {
+      selectedBtn.classList.add("btn-danger"); // Warna merah jika salah
+      selectedBtn.innerText += " ❌ Salah";
+
+      // Perhitungan poin untuk jawaban salah (50% dari jawaban benar)
+      point = Math.max((1000 - timeTaken * 100) * 0.5, 50);
+    }
+
+    console.log(
+      `Jawaban dikirim: ${value}, Jawaban benar: ${correctAnswer}, Poin: ${point}`
+    );
+
+    // Kirim poin ke server
+    socket.emit("updatepoint", {
+      teamName: namatim,
+      correct: isCorrect,
+      timeTaken: maxTime - timeTaken, // Hitung waktu yang digunakan
+      maxTime,
+    });
+  };
+
+  socket.on("disableOptions", ({ teamName }) => {
+    const optionsDiv = document.getElementById("optionstie");
+    let btn = optionsDiv.querySelectorAll("button");
+
+    btn.forEach((button) => {
+      button.classList.add("disabled");
+    });
+
+    console.log(`Opsi untuk tim ${teamName} dinonaktifkan.`);
+  });
+
+  socket.on("endtie", () => {
+    const quizTieElement = document.querySelector(".tiebreaker");
+    const endTieElement = document.querySelector(".endtie");
+    const congratsTieElement = document.querySelector(".congrats");
+
+    quizTieElement.style.display = "block";
+    endTieElement.style.display = "block";
+
+    congratsTieElement.classList.add("h2", "text-center");
+    congratsTieElement.innerText = `Quiz was ended, your final fund is S${formatter.format(
+      fund
+    )}`;
+  });
+
+  // end tie breaker question
 </script>
 
 <%- include('../partials/client/footer') %>

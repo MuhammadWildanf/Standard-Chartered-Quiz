@@ -3,22 +3,48 @@
   <div class="container d-flex flex-column align-items-center mt-5 gap-3">
     <h1 class="text-white">Get Ready for Portfolio Game</h1>
     <p class="text-white">Wait until all participants are ready</p>
-    <button
-      type="button"
-      class="btn btn-primary start"
-      style="border-radius: 50px"
-      onclick="startQuiz()"
-    >
-      Start Question
-    </button>
-    <button
-      type="button"
-      class="btn btn-success text-white NextQuestion"
-      style="border-radius: 50px; display: none;"
-      onclick="NextQuestion()"
-    >
-      Next Question
-    </button>
+    <div class="d-flex justify-content-center align-items-center gap-3">
+      <button
+        type="button"
+        class="btn btn-primary start"
+        style="border-radius: 50px"
+        onclick="startQuiz()"
+      >
+        Start Question
+      </button>
+      <button
+        type="button"
+        class="btn btn-success text-white NextQuestion"
+        style="border-radius: 50px; display: none"
+        onclick="NextQuestion()"
+      >
+        Next Question
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger text-white resetGame"
+        style="border-radius: 50px"
+        onclick="resetGame()"
+      >
+        resetGame
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger text-white NextQuiz"
+        style="border-radius: 50px; display: none"
+        onclick="NextQuiz()"
+      >
+        Next Quiz
+      </button>
+      <button
+        type="button"
+        class="btn btn-warning text-white NextQuestion2"
+        style="border-radius: 50px; display: none"
+        onclick="NextQuestion2()"
+      >
+        Next Question
+      </button>
+    </div>
     <div class="w-75 mt-3">
       <h2 class="text-center text-white">Team Lists</h2>
       <p class="total-join text-white text-center fs-4">
@@ -31,10 +57,7 @@
 
 <script>
   let currentIndex = 0;
-  const StartQuestion = (idx) => {
-    socket.emit("getQuestion", idx);
-    socket.emit("getQuestionInleaderboard", idx);
-  };
+  let tieBreakerIndex = 0;
 
   const socket = io("http://localhost:3000", {
     query: {
@@ -48,6 +71,26 @@
     currency: "SGD",
     currencyDisplay: "symbol",
   });
+
+  const resetGame = () => {
+    if (
+      confirm("Apakah Anda yakin ingin mereset game? Semua data akan dihapus!")
+    ) {
+      socket.emit("resetGame");
+
+      // Reload halaman setelah game di-reset
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+  };
+
+  // start first quiz
+
+  const StartQuestion = (idx) => {
+    socket.emit("getQuestion", idx);
+    socket.emit("getQuestionInleaderboard", idx);
+  };
 
   function animateCount(element, start, end, duration) {
     let range = end - start;
@@ -119,7 +162,7 @@
     );
 
     const startBtn = document.querySelector(".start");
-    startBtn.disabled = joinedTeams < 30;
+    startBtn.disabled = joinedTeams < 1;
 
     for (let id in Teams) {
       const div = document.createElement("div");
@@ -135,7 +178,7 @@
     const joinedCountElement = document.getElementById("joined-count");
     let joinedTeams = Number(joinedCountElement.textContent);
 
-    if (joinedTeams < 30) {
+    if (joinedTeams < 1) {
       alert("Belum cukup tim! Minimal 30 tim harus bergabung untuk memulai.");
       return;
     }
@@ -150,9 +193,45 @@
     document.querySelector(".NextQuestion").style.display = "inline-block";
   });
 
+  socket.on("end", () => {
+    const NextQuizElement = document.querySelector(".NextQuiz");
+    NextQuizElement.style.display = "block";
+
+    const NextQuestionElement = document.querySelector(".NextQuestion");
+    NextQuestionElement.style.display = "none";
+  });
+
+  // end first quiz
+
+  //start tiebreaker question
+
   const NextQuestion = () => {
     currentIndex++;
     StartQuestion(currentIndex);
+  };
+
+  const StartQuestionTieBreaker = (idx) => {
+    socket.emit("getQuestion2", idx);
+    socket.emit("getQuestion2Inleaderboard", idx);
+  };
+
+  socket.on("TiebreakerStarted", () => {
+    document.querySelector(".NextQuestion2").style.display = "inline-block";
+  });
+
+  const NextQuestion2 = () => {
+    tieBreakerIndex++;
+    StartQuestionTieBreaker(tieBreakerIndex);
+  };
+
+  const NextQuiz = () => {
+    console.log("button tie-breaker question");
+    socket.emit("startTieBreakerQuiz");
+    const NextQuizBtn = document.querySelector(".NextQuiz");
+    NextQuizBtn.style.display = "none";
+    const NextQestionBtn = document.querySelector(".NextQuestion");
+    NextQestionBtn.style.display = "none";
+    StartQuestionTieBreaker(tieBreakerIndex);
   };
 </script>
 

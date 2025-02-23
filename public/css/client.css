@@ -15,3 +15,44 @@
   .logo {
     margin-top: -10px;
   }
+
+  .fund {
+    display: flex;
+    flex-direction: column;
+    /* Susun elemen secara vertikal */
+    align-items: center;
+    /* Pusatkan horizontal */
+    gap: 8px;
+    /* Beri jarak antara teks dan fund-box */
+  }
+
+  .fund-box {
+    background-color: #38D200;
+    /* Warna hijau */
+    color: white;
+    /* Teks putih */
+    width: 189.1px;
+    /* Lebar */
+    height: 36px;
+    /* Tinggi */
+    display: flex;
+    justify-content: center;
+    /* Pusatkan horizontal */
+    align-items: center;
+    /* Pusatkan vertikal */
+    border-radius: 20px;
+    /* Sudut melengkung */
+    font-size: 18px;
+    /* Ukuran teks */
+    font-weight: bold;
+    text-align: center;
+    /* Pastikan teks rata tengah */
+  }
+
+  .text-green {
+    color: green;
+  }
+
+  .text-red {
+    color: red;
+  }
