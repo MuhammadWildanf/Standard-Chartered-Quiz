@@ -76,7 +76,7 @@
   ).innerHTML = `<p>Congratulations! You've got</p><br> <h1 style="font-weight: 650; font-size: 50px; color: #38D200;
 "><strong>S${formatter.format(fund)}</strong> </h1><br><p>Initial Balance</p>`;
 
-  const socket = io("http://localhost:3000", {
+  const socket = io("http://103.16.117.120:3000", {
     query: {
       userId: namatim, // ID tetap
       role: "user",
