@@ -108,9 +108,8 @@
     seatContainer.lastChild.appendChild(seat);
   }
 
-  const socket = io("https://scpvbportfoliogame.com", {
+  const socket = io("wss://scpvbportfoliogame.com/", {
     transports: ["websocket"],
-    secure: true,
     query: {
       userId: "host", // ID tetap
       role: "host",

@@ -59,9 +59,8 @@
   let currentIndex = 0;
   let tieBreakerIndex = 0;
 
-  const socket = io("https://scpvbportfoliogame.com", {
+  const socket = io("wss://scpvbportfoliogame.com/", {
     transports: ["websocket"],
-    secure: true,
     query: {
       userId: "admin123", // ID tetap
       role: "admin",

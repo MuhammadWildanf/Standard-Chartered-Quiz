@@ -5,7 +5,6 @@ import MasterRouter from "./src/routes/masterRoute.js";
 import HostRouter from "./src/routes/hostRoute.js";
 import express from "express";
 import http from "http";
-import https from "https";
 import { Server } from "socket.io";
 import cors from "cors";
 import path from "path";
@@ -16,17 +15,13 @@ import fs from "fs";
 
 dotenv.config();
 const app = express();
-const options = {
-  key: fs.readFileSync("/etc/ssl/certs/private/private.key"),
-  cert: fs.readFileSync("/etc/ssl/certs/private/ssl-bundle.crt")
-};
-const server = https.createServer(options);
+const server = http.createServer(app);
 const PORT = process.env.PORT || 3000;
 const URL = process.env.URL;
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "https://scpvbportfoliogame.com/",
     methods: ["GET", "POST"],
   },
 });
