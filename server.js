@@ -15,7 +15,11 @@ import fs from "fs";
 
 dotenv.config();
 const app = express();
-const server = http.createServer(app);
+const options = {
+  key: fs.readFileSync("/etc/ssl/certs/private/private.key"),
+  cert: fs.readFileSync("/etc/ssl/certs/private/ssl-bundle.crt")
+};
+const server = http.createServer(options);
 const PORT = process.env.PORT || 3000;
 const URL = process.env.URL;
 
@@ -262,6 +266,9 @@ io.on("connection", (socket) => {
     }
   });
 });
+
+
+
 
 // Jalankan server
 server.listen(PORT, () => {
