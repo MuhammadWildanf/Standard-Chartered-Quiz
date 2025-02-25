@@ -3,13 +3,14 @@
   <div class="container mt-5">
     <section class="wait">
       <div class="row">
-        <div class="col-md-6">
-          <h1 class="text-white">Get Ready for Portfolio Game</h1>
+        <div class="col-md-7">
+          <img src="/assets/getreadycolor.png" alt="">
+          <!-- <h1 class="text-white">Get Ready for Portfolio Game</h1> -->
           <p class="text-white">
             Please scan or type link on the table and enter your Team Name
           </p>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
           <div class="row">
             <div class="col-md-12">
               <div class="card rounded p-1">
@@ -38,7 +39,7 @@
           <div id="options"></div>
         </div>
       </div>
-      <div class="fund mt-5">
+      <div class="fund mt-3" style="display: none">
         <h3 class="text-white">The Team Has Answered</h3>
         <h2 class="fund-box" id="total-votes">0</h2>
       </div>
@@ -108,7 +109,7 @@
     seatContainer.lastChild.appendChild(seat);
   }
 
-  const socket = io("wss://scpvbportfoliogame.com/", {
+  const socket = io("http://192.168.88.112:3000", {
     transports: ["websocket"],
     query: {
       userId: "host", // ID tetap
@@ -133,10 +134,14 @@
     console.log(`${namatim} left`);
 
     fetch("/updatetim", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ teamName: namatim }),
-    })
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          teamName: namatim
+        }),
+      })
       .then((response) => response.json())
       .then((data) => console.log(data))
       .catch((error) => console.error("Error:", error));

@@ -1,12 +1,7 @@
 {
-    "asa": {
-        "id": "EpKMcPZu7VXqpkhuAAAD",
-        "name": "asa",
-        "fund": 1000000
-    },
-    "lk": {
-        "id": "PN6zELM7LJekWZiiAAAH",
-        "name": "lk",
+    "test": {
+        "id": "-fWkKe9X5JM9D9UAAAAd",
+        "name": "test",
         "fund": 1000000
     }
 }

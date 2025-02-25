@@ -57,29 +57,26 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    /* Gambar tetap di bawah */
-    position: fixed;
-    /* Agar selalu di bawah tanpa perlu scroll */
-    bottom: 0;
-    left: 0;
-  }
+    position: relative; /* Ubah dari fixed ke relative */
+    min-height: 100px; /* Tambahkan tinggi minimum */
+    padding-bottom: 20px; /* Beri jarak dari konten atasnya */
+}
 
-  .footer-img {
+.footer-img {
     height: auto;
     position: absolute;
-  }
+    bottom: 0;
+    z-index: -1; /* Supaya gambar ada di belakang konten */
+}
 
-  .left {
+.left {
     left: 0;
-    bottom: 0;
-    /* Posisi di ujung bawah */
-  }
+}
 
-  .right {
+.right {
     right: 0;
-    bottom: 0;
-    /* Posisi di ujung bawah */
-  }
+}
+
 
   /* Mode portrait */
   @media (orientation: portrait) {
@@ -94,3 +91,5 @@
       width: 18%;
     }
   }
+
+  
