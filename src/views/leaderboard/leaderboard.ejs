@@ -108,7 +108,9 @@
     seatContainer.lastChild.appendChild(seat);
   }
 
-  const socket = io("http://103.16.117.120:3000", {
+  const socket = io("https://103.16.117.120:3000", {
+    transports: ["websocket"],
+    secure: true,
     query: {
       userId: "host", // ID tetap
       role: "host",

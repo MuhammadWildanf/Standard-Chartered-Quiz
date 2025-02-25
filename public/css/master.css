@@ -19,34 +19,78 @@
 
 
   /* Kelas untuk tombol yang dipilih */
-.selected {
-  background-color: #4CAF50; /* Ganti dengan warna yang diinginkan */
-  color: white;
-}
+  .selected {
+    background-color: #4CAF50;
+    /* Ganti dengan warna yang diinginkan */
+    color: white;
+  }
 
-/* Kelas untuk tombol yang dinonaktifkan */
-.disabled {
-  background-color: #f0f0f0;
-  color: #ccc;
-}
+  /* Kelas untuk tombol yang dinonaktifkan */
+  .disabled {
+    background-color: #f0f0f0;
+    color: #ccc;
+  }
 
 
-.total-join {
-  text-align: center;
-  font-size: 18px;
-  font-weight: bold;
-  color: white;
-  margin-top: 10px;
-}
+  .total-join {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    margin-top: 10px;
+  }
 
-.progress {
-  background-color: #343a40; /* Warna dark untuk progress bar */
-  border-radius: 50px;
-  overflow: hidden;
-}
+  .progress {
+    background-color: #343a40;
+    /* Warna dark untuk progress bar */
+    border-radius: 50px;
+    overflow: hidden;
+  }
 
-.progress-bar {
-  font-weight: bold;
-  font-size: 16px;
-}
+  .progress-bar {
+    font-weight: bold;
+    font-size: 16px;
+  }
 
+  .footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    /* Gambar tetap di bawah */
+    position: fixed;
+    /* Agar selalu di bawah tanpa perlu scroll */
+    bottom: 0;
+    left: 0;
+  }
+
+  .footer-img {
+    height: auto;
+    position: absolute;
+  }
+
+  .left {
+    left: 0;
+    bottom: 0;
+    /* Posisi di ujung bawah */
+  }
+
+  .right {
+    right: 0;
+    bottom: 0;
+    /* Posisi di ujung bawah */
+  }
+
+  /* Mode portrait */
+  @media (orientation: portrait) {
+    .footer-img {
+      width: 50%;
+    }
+  }
+
+  /* Mode landscape */
+  @media (orientation: landscape) {
+    .footer-img {
+      width: 18%;
+    }
+  }

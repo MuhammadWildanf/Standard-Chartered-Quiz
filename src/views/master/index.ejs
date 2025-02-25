@@ -59,7 +59,9 @@
   let currentIndex = 0;
   let tieBreakerIndex = 0;
 
-  const socket = io("http://103.16.117.120:3000", {
+  const socket = io("https://103.16.117.120:3000", {
+    transports: ["websocket"],
+    secure: true,
     query: {
       userId: "admin123", // ID tetap
       role: "admin",
@@ -224,6 +226,12 @@
     StartQuestionTieBreaker(tieBreakerIndex);
   };
 
+  /**
+   * Button untuk memulai tie-breaker quiz
+   * Mengirimkan event "startTieBreakerQuiz" ke server
+   * Menyembunyikan tombol "Next Quiz" dan "Next Question"
+   * Memulai tie-breaker quiz dengan index yang saat ini
+   */
   const NextQuiz = () => {
     console.log("button tie-breaker question");
     socket.emit("startTieBreakerQuiz");
