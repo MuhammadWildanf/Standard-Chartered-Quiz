@@ -9,7 +9,7 @@
       style="margin-top: -140px"
     >
       <section class="wait text-center">
-        <h2>Welcome, Tim <strong><%= namatim %>,</strong></h2>
+        <h2>Welcome, Team <strong><%= namatim %>,</strong></h2>
         <h2 id="credit"></h2>
       </section>
       <section class="quiz" style="display: none">
@@ -38,8 +38,8 @@
           </div>
         </div>
       </section>
-      <section class="endtie">
-        <div class="congrats"></div>
+      <section class="endtie" style="display: none">
+        <div class="congratstie"></div>
       </section>
     </div>
   </div>
@@ -76,7 +76,7 @@
   ).innerHTML = `<p>Congratulations! You've got</p><br> <h1 style="font-weight: 650; font-size: 50px; color: #38D200;
 "><strong>S${formatter.format(fund)}</strong> </h1><br><p>Initial Balance</p>`;
 
-  const socket = io("wss://scpvbportfoliogame.com/", {
+  const socket = io("http://192.168.88.112:3000", {
     transports: ["websocket"],
     query: {
       userId: namatim, // ID tetap
@@ -208,6 +208,7 @@
   // start tie breaker question
   let startTime;
   let timerInterval;
+  let point = 0;
 
   const startTimer = (duration, questionId) => {
     clearInterval(timerInterval);
@@ -289,8 +290,9 @@
     startTimer(duration, data.id);
   });
 
+
   const submitTieBreaker = (value, event, correctAnswer) => {
-    // clearInterval(timerInterval);
+    clearInterval(timerInterval);
 
     const optionsDiv = document.getElementById("optionstie");
     let endTime = Date.now();
@@ -301,29 +303,32 @@
     });
 
     const selectedBtn = event.target;
-    let point = 0;
     selectedBtn.classList.remove("btn-secondary");
     let isCorrect = value === correctAnswer;
+    let maxTime = question.durations || 10; // Gunakan durasi dari JSON
     let timeText = document.getElementById("timer").innerText.split(" ")[2];
     let timeTaken = isNaN(parseInt(timeText)) ? maxTime : parseInt(timeText);
-    let maxTime = question.durations || 10; // Gunakan durasi dari JSON
+
     if (value === correctAnswer) {
       selectedBtn.classList.add("btn-success"); // Warna hijau jika benar
-      selectedBtn.innerText += " ✅ Benar";
-
-      // Perhitungan poin: 1000 - waktu (semakin cepat semakin besar)
-      point = Math.max(1000 - timeTaken * 100, 100);
+      point += Math.max(1000 - timeTaken * 100, 100);
     } else {
       selectedBtn.classList.add("btn-danger"); // Warna merah jika salah
-      selectedBtn.innerText += " ❌ Salah";
-
-      // Perhitungan poin untuk jawaban salah (50% dari jawaban benar)
-      point = Math.max((1000 - timeTaken * 100) * 0.5, 50);
+      point += Math.max((1000 - timeTaken * 100) * 0.5, 50);
     }
 
     console.log(
       `Jawaban dikirim: ${value}, Jawaban benar: ${correctAnswer}, Poin: ${point}`
     );
+
+    // 🛠 **Tambahkan log untuk debugging**
+    console.log("Mengirim data ke server:", {
+      teamName: namatim,
+      correct: isCorrect,
+      timeTaken: maxTime - timeTaken,
+      maxTime,
+      point,
+    });
 
     // Kirim poin ke server
     socket.emit("updatepoint", {
@@ -331,8 +336,10 @@
       correct: isCorrect,
       timeTaken: maxTime - timeTaken, // Hitung waktu yang digunakan
       maxTime,
+      point
     });
-  };
+};
+
 
   socket.on("disableOptions", ({ teamName }) => {
     const optionsDiv = document.getElementById("optionstie");
@@ -348,15 +355,13 @@
   socket.on("endtie", () => {
     const quizTieElement = document.querySelector(".tiebreaker");
     const endTieElement = document.querySelector(".endtie");
-    const congratsTieElement = document.querySelector(".congrats");
+    const congratsTieElement = document.querySelector(".congratstie");
 
-    quizTieElement.style.display = "block";
+    quizTieElement.style.display = "none";
     endTieElement.style.display = "block";
 
     congratsTieElement.classList.add("h2", "text-center");
-    congratsTieElement.innerText = `Quiz was ended, your final fund is S${formatter.format(
-      fund
-    )}`;
+    congratsTieElement.innerText = `Quiz was ended, your final point is ${point}`;
   });
 
   // end tie breaker question

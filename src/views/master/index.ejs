@@ -30,11 +30,11 @@
       </button>
       <button
         type="button"
-        class="btn btn-danger text-white NextQuiz"
+        class="btn btn-primary text-white NextQuiz"
         style="border-radius: 50px; display: none"
         onclick="NextQuiz()"
       >
-        Next Quiz
+        Tie Breaker Quiz
       </button>
       <button
         type="button"
@@ -59,7 +59,7 @@
   let currentIndex = 0;
   let tieBreakerIndex = 0;
 
-  const socket = io("wss://scpvbportfoliogame.com/", {
+  const socket = io("http://192.168.88.112:3000", {
     transports: ["websocket"],
     query: {
       userId: "admin123", // ID tetap
@@ -75,7 +75,7 @@
 
   const resetGame = () => {
     if (
-      confirm("Apakah Anda yakin ingin mereset game? Semua data akan dihapus!")
+      confirm("Are you sure you want to reset the game? All data will be deleted!")
     ) {
       socket.emit("resetGame");
 

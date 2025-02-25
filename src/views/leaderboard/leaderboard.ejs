@@ -108,7 +108,7 @@
     seatContainer.lastChild.appendChild(seat);
   }
 
-  const socket = io("wss://scpvbportfoliogame.com/", {
+  const socket = io("http://192.168.88.112:3000", {
     transports: ["websocket"],
     query: {
       userId: "host", // ID tetap
@@ -285,6 +285,7 @@
           <td>${index + 1}</td>
           <td>${team.name}</td>
           <td>${team.fund.toLocaleString("id-ID")}</td>
+          <td>${team.point}</td>
         `;
         listFinalTim.appendChild(row);
       });

@@ -1,4 +1,18 @@
 import { teamNames } from "../../globalState.js"; // Import dari file yang sama dengan server.js
+import path from "path";
+import fs, { read } from "fs";
+import { fileURLToPath } from 'url';
+
+// Gantilah __dirname dengan kode ini
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
+const readData = () => {
+  const filePath = path.join(__dirname, '../../data.json');
+  const rawData = fs.readFileSync(filePath, 'utf-8');
+  return JSON.parse(rawData);
+}
 
 export const home = (req, res) => {
   res.render("client/form.ejs", { title: "Client" });
@@ -13,28 +27,17 @@ export const quiz = (req, res) => {
   res.render("client/wait.ejs", { title: "Quiz", namatim: name });
 };
 
-export const validateTeamName = (req, res, next) => {
-  const { teamName } = req.body;
-
-  if (!teamName) {
-    return res.render("client/form.ejs", {
-      title: "Client",
-      errorMessage: "Nama tim wajib diisi",
-    });
-  }
-
-  if (teamNames.has(teamName)) {
-    return res.render("client/form.ejs", {
-      title: "Client",
-      errorMessage: "Nama tim sudah digunakan, pilih nama lain.",
-    });
-  }
-
-  next(); // Lanjut ke handler berikutnya
-};
-
 export const teamName = (req, res) => {
   const { teamName } = req.body;
+
+  const data = readData()
+
+  if (data.hasOwnProperty(teamName)) {
+    return res.render("client/form.ejs", {
+      title: "Client",
+      errorMessage: "The team name is already in use",
+    });
+  }
 
   teamNames.add(teamName);
   req.session.teamName = teamName;
