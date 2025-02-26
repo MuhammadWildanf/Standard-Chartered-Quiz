@@ -1,7 +1,7 @@
 <%- include('../partials/master/header') %>
 <main>
   <div class="container d-flex flex-column align-items-center mt-5 gap-3">
-    <img src="/assets/getreadycolor.png" alt="">
+    <img src="/assets/getreadycolor.png" alt="" />
     <!-- <h1 class="text-white">Get Ready for Portfolio Game</h1>
     <p class="text-white">Wait until all participants are ready</p> -->
     <div class="d-flex justify-content-center align-items-center gap-3">
@@ -60,7 +60,8 @@
   let currentIndex = 0;
   let tieBreakerIndex = 0;
 
-  const socket = io("http://192.168.88.112:3000", {
+  // const socket = io("http://localhost:3000", {
+    const socket = io("wss://scpvbportfoliogame.com/", {
     transports: ["websocket"],
     query: {
       userId: "admin123", // ID tetap
@@ -75,16 +76,24 @@
   });
 
   const resetGame = () => {
-    if (
-      confirm("Are you sure you want to reset the game? All data will be deleted!")
-    ) {
-      socket.emit("resetGame");
+    Swal.fire({
+      title: "Are you sure?",
+      text: "All data will be deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, reset it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        socket.emit("resetGame");
 
-      // Reload halaman setelah game di-reset
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    }
+        // Reload halaman setelah game di-reset
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+    });
   };
 
   // start first quiz
@@ -181,7 +190,11 @@
     let joinedTeams = Number(joinedCountElement.textContent);
 
     if (joinedTeams < 1) {
-      alert("Belum cukup tim! Minimal 30 tim harus bergabung untuk memulai.");
+      Swal.fire({
+        title: "Not enough teams!",
+        text: "At least 30 teams must join to start.",
+        icon: "error",
+      });
       return;
     }
 

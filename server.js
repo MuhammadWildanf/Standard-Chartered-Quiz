@@ -322,5 +322,5 @@ const updateData = (data) => {
 
 // Jalankan server
 server.listen(PORT, () => {
-  console.log(`Server berjalan di https://192.168.88.112:${PORT}`);
+  console.log(`Server berjalan di http://localhost:${PORT}`);
 });
