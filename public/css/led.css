@@ -15,6 +15,9 @@
   /* Border Header & Footer */
   .logo {
     margin-top: -10px;
+    width: 300px; /* Sesuaikan ukuran lebarnya */
+    height: auto; /* Menjaga aspek rasio */
+    max-width: 100%; /* Agar tetap responsif */
   }
 
 
@@ -31,35 +34,35 @@
     color: #ccc;
   }
 
-  .custom-green td,
-  .custom-green th {
+  .tied-player td,
+  .tied-player th {
     background-color: #38D200 !important;
     color: white !important;
   }
 
-  .custom-blue td,
-  .custom-blue th {
+  .top-team td,
+  .top-team th {
     background-color: #0473EA !important;
     color: white !important;
   }
 
-  .custom-green:first-child td:first-child,
-  .custom-blue:first-child td:first-child {
+  .tied-player:first-child td:first-child,
+  .top-team:first-child td:first-child {
     border-top-left-radius: 10px;
   }
 
-  .custom-green:first-child td:last-child,
-  .custom-blue:first-child td:last-child {
+  .tied-player:first-child td:last-child,
+  .top-team:first-child td:last-child {
     border-top-right-radius: 10px;
   }
 
-  .custom-green:last-child td:first-child,
-  .custom-blue:last-child td:first-child {
+  .tied-player:last-child td:first-child,
+  .top-team:last-child td:first-child {
     border-bottom-left-radius: 10px;
   }
 
-  .custom-green:last-child td:last-child,
-  .custom-blue:last-child td:last-child {
+  .tied-player:last-child td:last-child,
+  .top-team:last-child td:last-child {
     border-bottom-right-radius: 10px;
   }
 

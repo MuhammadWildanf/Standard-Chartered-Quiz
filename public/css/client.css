@@ -4,6 +4,15 @@
     flex-direction: column;
     min-height: 100vh;
     margin: 0;
+
+    background-image: url('../assets/bg-user.jpeg'); /* Ganti dengan path gambarmu */
+    background-size: cover; /* Menutupi seluruh layar */
+    background-position: center; /* Posisikan gambar di tengah */
+    background-repeat: no-repeat; /* Hindari pengulangan gambar */
+    background-attachment: fixed; /* Biarkan gambar tetap saat scroll */
+    
+    /* Tambahkan warna overlay transparan (opsional) */
+    position: relative;
   }
 
   /* Konten utama agar fleksibel */
@@ -14,6 +23,9 @@
   /* Border Header & Footer */
   .logo {
     margin-top: -10px;
+    width: 300px; /* Sesuaikan ukuran lebarnya */
+    height: auto; /* Menjaga aspek rasio */
+    max-width: 100%; /* Agar tetap responsif */
   }
 
   .fund {
@@ -59,7 +71,7 @@
 
   .option-container {
     width: 100%;
-    max-width: 200px;
+    max-width: 180px;
     /* Sesuaikan ukuran container */
   }
 

@@ -1,9 +1,9 @@
 <%- include('../partials/master/header') %>
 <main>
   <div class="container d-flex flex-column align-items-center mt-5 gap-3">
-    <img src="/assets/GetreadyMaster1.svg" alt="" class="img-fluid" />
+    <img src="/assets/GetreadyMaster.svg" alt="" class="img-fluid" />
     <!-- <h1 class="text-white">Get Ready for Portfolio Game</h1> -->
-    <!-- <p class="text-white">Wait until all participants are ready</p> -->
+    <h5 class="text-white" id="questionIndex">Wait until all participants are ready</h5>
     <div class="d-flex justify-content-start align-items-start gap-3">
       <button
         type="button"
@@ -47,11 +47,11 @@
       </button>
     </div>
     <div class="col-md-12 d-flex flex-wrap justify-content-center gap-2 mt-3">
-      <button type="button" class="btn btn-primary SwitchLeaderboard">
-        Switch Leaderboard
+      <button type="button" class="btn btn-primary SwitchButton" style="display: none;">
+        Switch to Leaderboard
       </button>
-      <button type="button" class="btn btn-primary SwitchQuestion">
-        Switch Question
+      <button type="button" class="btn btn-success SwitchButtonTie" style="display: none;">
+        Switch to Leaderboard
       </button>
     </div>
     <div class="w-75 mt-3">
@@ -67,9 +67,10 @@
 <script>
   let currentIndex = 0;
   let tieBreakerIndex = 0;
+  let isLeaderboard = false;
 
-  const socket = io("wss://scpvbportfoliogame.com/", {
-  // const socket = io("http://192.168.88.116:3000", {
+  // const socket = io("wss://scpvbportfoliogame.com/", {
+  const socket = io("http://192.168.88.116:3000", {
     transports: ["websocket"],
     query: {
       userId: "admin123", // ID tetap
@@ -111,12 +112,32 @@
     socket.emit("getQuestionInleaderboard", idx);
   };
 
-  document.querySelector(".SwitchQuestion").addEventListener("click", () => {
-    socket.emit("switchMode", "question"); // Kirim sinyal ke server untuk menampilkan question
+  document.querySelector(".SwitchButton").addEventListener("click", () => {
+    const switchButton = document.querySelector(".SwitchButton");
+
+    if(isLeaderboard) {
+      socket.emit("switchMode", "question");
+      isLeaderboard = false;
+      switchButton.innerHTML = "Switch to Leaderboard";
+    } else {
+      socket.emit("switchMode", "leaderboard");
+      isLeaderboard = true;
+      switchButton.innerHTML = "Switch to Question";
+    } 
   });
 
-  document.querySelector(".SwitchLeaderboard").addEventListener("click", () => {
-    socket.emit("switchMode", "leaderboard"); // Kirim sinyal ke server untuk menampilkan leaderboard
+  document.querySelector(".SwitchButtonTie").addEventListener("click", () => {
+    const SwitchButtonTie = document.querySelector(".SwitchButtonTie");
+
+    if(isLeaderboard) {
+      socket.emit("switchTieBreaker", "questionTieBreaker");
+      isLeaderboard = false;
+      SwitchButtonTie.innerHTML = "Switch to Leaderboard";
+    } else {
+      socket.emit("switchTieBreaker", "leaderboardTieBreaker");
+      isLeaderboard = true;
+      SwitchButtonTie.innerHTML = "Switch to Question";
+    } 
   });
 
   function animateCount(element, start, end, duration) {
@@ -217,6 +238,8 @@
     socket.emit("startQuiz");
     const startBtn = document.querySelector(".start");
     startBtn.style.display = "none";
+    const SwitchButton = document.querySelector(".SwitchButton");
+    SwitchButton.style.display = "inline-block";
     StartQuestion(currentIndex);
   };
 
@@ -225,11 +248,22 @@
   });
 
   socket.on("end", () => {
+    const questionIndexDiv = document.getElementById("questionIndex");
+    questionIndexDiv.innerText = "Quiz Was ended";
     const NextQuizElement = document.querySelector(".NextQuiz");
     NextQuizElement.style.display = "block";
 
     const NextQuestionElement = document.querySelector(".NextQuestion");
     NextQuestionElement.style.display = "none";
+
+    const SwitchButton = document.querySelector(".SwitchButton");
+    SwitchButton.style.display = "none";
+  });
+
+  socket.on("question", (data) => {
+    console.log("question 1", data);
+    const questionIndexDiv = document.getElementById("questionIndex");
+    questionIndexDiv.innerText = `Scenario : ${data.id}`;
   });
 
   // end first quiz
@@ -271,7 +305,10 @@
     NextQuizBtn.style.display = "none";
     const NextQestion2Btn = document.querySelector(".NextQuestion2");
     NextQestion2Btn.style.display = "block";
+    const SwitchButtonTie = document.querySelector(".SwitchButtonTie");
+    SwitchButtonTie.style.display = "block";
     StartQuestionTieBreaker(tieBreakerIndex);
+
   };
 </script>
 

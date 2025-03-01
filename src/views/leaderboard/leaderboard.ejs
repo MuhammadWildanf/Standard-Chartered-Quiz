@@ -5,7 +5,7 @@
       <div class="row">
         <div class="col-md-7">
           <img src="/assets/Getreadycolor.svg" alt="" class="img-fluid" />
-          <p class="text-white">
+          <p class="text-white ms-5">
             Please scan or type link on the table and enter your Team Name
           </p>
         </div>
@@ -38,7 +38,7 @@
           <div id="options"></div>
         </div>
       </div>
-      <div class="fund mt-3">
+      <div class="fund mt-3 d-flex justify-content-center" style="display: none;">
         <h3 class="text-white">The Team Has Answered</h3>
         <h2 class="fund-box" id="total-votes">0</h2>
       </div>
@@ -63,9 +63,9 @@
           <div id="optionsTie" class="row mt-3"></div>
         </div>
       </div>
-      <div class="fundTie mt-5">
+      <div class="fund mt-5">
         <h3 class="text-white">The Team Has Answered</h3>
-        <h2 class="fund-boxTie" id="total-votesTie">0</h2>
+        <h2 class="fund-box text-white" id="total-votesTie">0</h2>
       </div>
     </section>
     <section class="newleaderboard" style="display: none">
@@ -90,6 +90,28 @@
   const seatsPerRow = 3;
   const seatContainer = document.getElementById("seat-container");
 
+  function getTopTeams(data) {
+    const teamsArray = Object.values(data);
+
+    // Urutkan berdasarkan fund dari terbesar ke terkecil
+    teamsArray.sort((a, b) => b.fund - a.fund);
+
+    // Ambil top 3 berdasarkan fund
+    const topTeams = new Set(teamsArray.slice(0, 3).map((team) => team.fund));
+
+    // Cari fund dari peringkat ke-3 (jika cukup tim)
+    const thirdRankers = teamsArray.length >= 3 ? teamsArray[2].fund : null;
+
+    // Tim yang memiliki fund sama dengan peringkat ke-3 dianggap tied
+    let tiedPlayers = teamsArray.filter((team) => team.fund === thirdRankers);
+    if (tiedPlayers.length == 1) {
+      tiedPlayers = null;
+    }
+    const topPlayer = teamsArray.filter((team) => topTeams.has(team.fund));
+
+    return { topTeams, tiedPlayers, sortedTeams: teamsArray };
+  }
+
   for (let i = 0; i < maxSeats; i++) {
     if (i % seatsPerRow === 0) {
       // Buat baris baru setiap 3 kursi
@@ -108,8 +130,8 @@
     seatContainer.lastChild.appendChild(seat);
   }
 
-  const socket = io("wss://scpvbportfoliogame.com/", {
-  // const socket = io("http://192.168.88.116:3000", {
+  // const socket = io("wss://scpvbportfoliogame.com/", {
+  const socket = io("http://192.168.88.116:3000", {
     transports: ["websocket"],
     query: {
       userId: "host", // ID tetap
@@ -152,6 +174,7 @@
   let votes = {};
 
   socket.on("questioninLeaderboard", (data) => {
+    document.querySelector(".fund").style.display = "block";
     votes = {}; // Reset votes di frontend
     document.getElementById("total-votes").innerText = "0"; // Reset total votes tampilan
     document.querySelector(".wait").style.display = "none";
@@ -159,7 +182,12 @@
     questionIndexDiv.innerText = `Scenario : ${data.id}`;
     questionIndexDiv.classList.add("h3", "text-center");
 
-    document.getElementById("question").innerText = data.question;
+    const questionDiv = document.getElementById("question");
+    questionDiv.innerHTML = data.question.split(",").join("<br>");
+    questionDiv.classList.add("h2", "text-center","text-white");
+
+    question = data;
+
     const optionsDiv = document.getElementById("options");
     optionsDiv.innerHTML = "";
     optionsDiv.classList.add(
@@ -178,7 +206,7 @@
       const img = document.createElement("img");
       img.src = opt.image; // Gunakan URL dari JSON
       img.alt = opt.text;
-      img.classList.add("img-fluid","bg-white","rounded");
+      img.classList.add("img-fluid", "bg-white", "rounded");
 
       // Buat tombol opsi
       const btn = document.createElement("button");
@@ -252,28 +280,43 @@
   });
 
   socket.on("updateTeams", (Teams) => {
+    const { topTeams, tiedPlayers, sortedTeams } = getTopTeams(
+      Object.values(Teams)
+    );
     const listTim = document.getElementById("list-tim");
     listTim.innerHTML = "";
-    Object.values(Teams)
-      .sort((a, b) => b.fund - a.fund)
-      .forEach((team, index) => {
-        const rowClass = index < 5 ? "custom-green" : "custom-blue"; // 5 teratas hijau, lainnya biru
-        const row = document.createElement("tr");
-        row.classList.add(rowClass);
-        row.innerHTML = `
-          <td>${index + 1}</td>
-          <td>${team.name}</td>
-          <td>${team.fund.toLocaleString("id-ID")}</td>
-        `;
-        listTim.appendChild(row);
-      });
+    sortedTeams.forEach((team, index) => {
+      const row = document.createElement("tr");
+
+      // Tentukan class berdasarkan kategori tim
+      if (tiedPlayers != null) {
+        if (tiedPlayers.some((tied) => tied.fund === team.fund)) {
+          row.classList.add("tied-player"); // Warna untuk tied players
+        } else if (topTeams.has(team.fund)) {
+          row.classList.add("top-team"); // Warna untuk top 3
+        }
+      }
+      
+      if (topTeams.has(team.fund)) {
+        row.classList.add("top-team"); // Warna untuk top 3
+      }
+
+      row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${team.name}</td>
+                    <td>${team.fund.toLocaleString("id-ID")}</td>
+                `;
+      listTim.appendChild(row);
+    });
   });
 
   // end first quiz leaderboard
 
+  let votesTie = {};
+
   socket.on("questionTieinLeaderboard", (data) => {
     console.log("Menerima pertanyaan tie-breaker:", data);
-    votes = {}; // Reset votes di frontend
+    votesTie = {}; // Reset votes di frontend
     document.getElementById("total-votesTie").innerText = "0"; // Reset total votes tampilan
     document.querySelector(".leaderboard").style.display = "none";
     document.querySelector(".tieBreakerQuiz").style.display = "block";
@@ -292,12 +335,33 @@
       <div class="card">
         <div class="card-body text-center">
           <h5>${opt.text}</h5>
-          <div id="votes-${opt.value}" class="mt-2 text-success">Votes: 0</div>
+          <div id="votestie-${opt.value}" class="mt-2 text-success">Votes: 0</div>
         </div>
       </div>`;
       optionsTieDiv.appendChild(optionTieCard);
     });
-    socket.emit("resetVotes");
+    socket.emit("resetVotestie");
+  });
+
+  socket.on("updateVotesTie", (votestie) => {
+    Object.entries(votestie).forEach(([optionValue, count]) => {
+      const voteElem = document.getElementById(`votestie-${optionValue}`);
+      if (voteElem) voteElem.innerText = `Votes: ${count}`;
+    });
+  });
+
+  socket.on("totalVotestie", (totaltie) => {
+    document.getElementById("total-votesTie").innerText = totaltie;
+  });
+
+  socket.on("showQuestionTieBreaker", () => {
+    document.querySelector(".tieBreakerQuiz").style.display = "block";
+    document.querySelector(".newleaderboard").style.display = "none";
+  });
+
+  socket.on("showLeaderboardTieBreaker", () => {
+    document.querySelector(".tieBreakerQuiz").style.display = "none";
+    document.querySelector(".newleaderboard").style.display = "block";
   });
 
   socket.on("endTieinLeaderboard", () => {
@@ -315,7 +379,6 @@
         row.innerHTML = `
           <td>${index + 1}</td>
           <td>${team.name}</td>
-          <td>${team.fund.toLocaleString("id-ID")}</td>
           <td>${team.point}</td>
         `;
         listFinalTim.appendChild(row);

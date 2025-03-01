@@ -9,15 +9,15 @@
       style="margin-top: -140px"
     >
       <section class="wait text-center">
-        <h2>Welcome, Team <strong><%= namatim %>,</strong></h2>
+        <h2 class="text-white">Welcome, Team <strong><%= namatim %>,</strong></h2>
         <h2 id="credit"></h2>
       </section>
       <section class="quiz" style="display: none">
-        <div class="fund mb-5">
-          <h3>Your Fund:</h3>
+        <div class="fund mb-2">
+          <h3 class="text-white">Your Fund:</h3>
           <h2 id="teamFundDisplay" class="fund-box"></h2>
         </div>
-        <div id="questionIndex" class="mt-5"></div>
+        <div id="questionIndex"></div>
         <div id="question"></div>
         <div class="row d-flex justify-content-center">
           <div class="col-md-12">
@@ -29,7 +29,7 @@
         <div class="congrats"></div>
       </section>
       <section class="tiebreaker" style="display: none">
-        <div id="timer" class="h4 text-center text-danger mt-3"></div>
+        <!-- <div id="timer" class="h4 text-center text-danger mt-3"></div> -->
         <div id="questiontieIndex"></div>
         <div id="questiontie"></div>
         <div class="row justify-content-center">
@@ -73,11 +73,11 @@
 
   document.getElementById(
     "credit"
-  ).innerHTML = `<p>Congratulations! You've got</p><br> <h1 style="font-weight: 650; font-size: 50px; color: #38D200;
-"><strong>S${formatter.format(fund)}</strong> </h1><br><p>Initial Balance</p>`;
+  ).innerHTML = `<p style="color: white">Congratulations! You've got</p><br> <h1 style="font-weight: 650; font-size: 50px; color: #38D200;
+"><strong>S${formatter.format(fund)}</strong> </h1><br><p style="color: white">Initial Balance</p>`;
 
-  const socket = io("wss://scpvbportfoliogame.com/", {
-  // const socket = io("http://192.168.88.116:3000", {
+  // const socket = io("wss://scpvbportfoliogame.com/", {
+  const socket = io("http://192.168.88.116:3000", {
     transports: ["websocket"],
     query: {
       userId: namatim, // ID tetap
@@ -136,13 +136,12 @@
     console.log("question 1", data);
 
     const questionIndexDiv = document.getElementById("questionIndex");
-    const questionDiv = document.getElementById("question");
-
     questionIndexDiv.innerText = `Scenario : ${data.id}`;
-    questionIndexDiv.classList.add("p", "text-center", "font-weight-bold");
+    questionIndexDiv.classList.add("h5", "text-center","text-white");
 
-    questionDiv.innerText = data.question;
-    questionDiv.classList.add("h2", "text-center");
+    const questionDiv = document.getElementById("question");
+    questionDiv.innerHTML = data.question.split(",").join("<br>");
+    questionDiv.classList.add("h2", "text-center","text-white");
 
     question = data;
 
@@ -153,7 +152,7 @@
       "flex-row",
       "flex-wrap", // Agar tetap rapi jika opsi terlalu banyak
       "justify-content-center",
-      "gap-3",
+      "gap-4",
       "mt-3"
     );
 
@@ -175,7 +174,7 @@
       const img = document.createElement("img");
       img.src = opt.image; // Gunakan URL dari JSON
       img.alt = opt.text;
-      img.classList.add("img-fluid");
+      img.classList.add("img-fluid","bg-white","rounded");
 
       // Buat tombol opsi
       const btn = document.createElement("button");
@@ -202,7 +201,7 @@
     quizElement.style.display = "none";
     endElement.style.display = "block";
 
-    congratsElement.classList.add("h2", "text-center");
+    congratsElement.classList.add("h2", "text-center","text-white");
     congratsElement.innerText = `Quiz was ended, your final fund is S${formatter.format(
       fund
     )}`;
@@ -235,6 +234,7 @@
   let startTime;
   let timerInterval;
   let point = 0;
+  let timeElapsed = 0;
 
   const startTimer = (duration, questionId) => {
     clearInterval(timerInterval);
@@ -249,20 +249,21 @@
       document.querySelector(".tiebreaker").prepend(timerDisplay);
     }
 
-    timerDisplay.innerText = `Time left: ${timeLeft}s`;
+    // timerDisplay.innerText = `Time left: ${timeLeft}s`;
 
     timerInterval = setInterval(() => {
       timeLeft--;
-      timerDisplay.innerText = `Time left: ${timeLeft}s`;
+      timeElapsed = timeLeft;
+      // timerDisplay.innerText = `Time left: ${timeLeft}s`;
 
       if (timeLeft <= 0) {
         clearInterval(timerInterval);
         console.log("Waktu habis!");
-        socket.emit("timeUp", { questionId, teamName: namatim });
+        // socket.emit("timeUp", { questionId, teamName: namatim });
 
         // Nonaktifkan tombol jawaban saat waktu habis
-        const btns = document.querySelectorAll("#optionstie button");
-        btns.forEach((btn) => btn.classList.add("disabled"));
+        // const btns = document.querySelectorAll("#optionstie button");
+        // btns.forEach((btn) => btn.classList.add("disabled"));
       }
     }, 1000);
   };
@@ -279,11 +280,11 @@
     const questiontieIndexDiv = document.getElementById("questiontieIndex");
     const questiontieDiv = document.getElementById("questiontie");
 
-    questiontieIndexDiv.innerText = `(QUESTION : ${data.id})`;
-    questiontieIndexDiv.classList.add("h3", "text-center");
+    questiontieIndexDiv.innerText = `Scenario : ${data.id}`;
+    questiontieIndexDiv.classList.add("h3", "text-center", "text-white");
 
     questiontieDiv.innerText = data.question;
-    questiontieDiv.classList.add("h2", "text-center");
+    questiontieDiv.classList.add("h2", "text-center", "text-white");
 
     question = data;
 
@@ -331,15 +332,16 @@
     selectedBtn.classList.remove("btn-secondary");
     let isCorrect = value === correctAnswer;
     let maxTime = question.durations || 10; // Gunakan durasi dari JSON
-    let timeText = document.getElementById("timer").innerText.split(" ")[2];
-    let timeTaken = isNaN(parseInt(timeText)) ? maxTime : parseInt(timeText);
+    let timeTaken = isNaN(timeElapsed) ? maxTime : timeElapsed;
 
     if (value === correctAnswer) {
       selectedBtn.classList.add("btn-success"); // Warna hijau jika benar
-      point += Math.max(1000 - timeTaken * 100, 100);
+      point += 100;
+      point += timeTaken * 100;
     } else {
       selectedBtn.classList.add("btn-danger"); // Warna merah jika salah
-      point += Math.max((1000 - timeTaken * 100) * 0.5, 50);
+      point += 50;
+      point += timeTaken * 50;
     }
 
     console.log(
@@ -356,6 +358,7 @@
     });
 
     // Kirim poin ke server
+    socket.emit("voteTie", { teamName: namatim, option: value });
     socket.emit("updatepoint", {
       teamName: namatim,
       correct: isCorrect,
@@ -384,7 +387,7 @@
     quizTieElement.style.display = "none";
     endTieElement.style.display = "block";
 
-    congratsTieElement.classList.add("h2", "text-center");
+    congratsTieElement.classList.add("h2", "text-center","text-white");
     congratsTieElement.innerText = `Quiz was ended, your final point is ${point}`;
   });
 

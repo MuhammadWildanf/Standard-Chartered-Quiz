@@ -54,6 +54,7 @@ let admins = {};
 let users = {};
 let hosts = {};
 let votes = {};
+let votesTie = {};
 
 let questions = [];
 let TieBreakerQuestions = [];
@@ -71,14 +72,27 @@ try {
 }
 
 function getTopTeams() {
-  const data = JSON.parse(fs.readFileSync("data.json", 'utf-8'));
+  const data = JSON.parse(fs.readFileSync("data.json", "utf-8"));
   const teamsArray = Object.values(data);
 
   // Urutkan berdasarkan fund (dari yang tertinggi)
   teamsArray.sort((a, b) => b.fund - a.fund);
 
-  // Ambil 5 tim teratas 
-  return teamsArray.slice(0, 5); //ganti 5 atau berapapun 
+  // Ambil tim teratas berdasarkan jumlah hadiah
+  const topTeams = new Set(teamsArray.slice(0, 3).map((team) => team.fund));
+
+  const thirdRankers = teamsArray.length >= 3 ? teamsArray[2].fund : null;
+
+  const tiedPlayers = teamsArray.filter((team) => team.fund === thirdRankers);
+  console.log(tiedPlayers);
+  if (tiedPlayers.length == 1) {
+    tiedPlayers = null;
+  }
+
+  const topPlayer = teamsArray.filter((team) => topTeams.has(team.fund));
+  console.log(topPlayer); // Hanya 3 tim teratas otomatis menang
+
+  return tiedPlayers; // Jika tidak ada tie-breaker, hanya ambil 3 tim teratas
 }
 
 function getSocketIdByTeam(teamName) {
@@ -102,7 +116,7 @@ io.on("connection", (socket) => {
     users[userId] = { id: socket.id, name: userId, fund: 1000000 };
     socket.teamName = userId;
     console.log(`Team ${userId} connected with socket ${socket.id}`);
-    updateData(users)
+    updateData(users);
     io.emit("updateTeams", users);
   }
 
@@ -168,7 +182,7 @@ io.on("connection", (socket) => {
     if (users[teamName]) {
       // users[teamName].fund += amount;
       users[teamName].fund = amount;
-      updateData(users)
+      updateData(users);
       console.log(`Dana tim ${teamName} diperbarui menjadi: S${amount}`);
       io.emit("updateTeams", users);
     }
@@ -189,7 +203,6 @@ io.on("connection", (socket) => {
   // start tiebreaker question
 
   socket.on("getQuestion2", (index) => {
-
     if (index < TieBreakerQuestions.length) {
       io.emit("questiontie", TieBreakerQuestions[index]);
     } else {
@@ -213,24 +226,46 @@ io.on("connection", (socket) => {
     console.log("Tie breaker question Started!");
 
     let top5team = getTopTeams();
-
-    top5team.forEach(team => {
-      let socketId = getSocketIdByTeam(team.name);
-      if (socketId) {
-        console.log(`✅ ${team.name} (${socketId}) masuk tie-breaker`);
-        let socket = io.sockets.sockets.get(socketId);
-        if (socket) {
-          socket.join("tie-breaker");
-        } else {
-          console.log(`⚠️ Socket ${socketId} tidak ditemukan untuk tim ${team.name}`);
-        }
+    const socketId = hosts["host"]; // Ambil socket ID host
+    if (socketId) {
+      const socket = io.sockets.sockets.get(socketId);
+      if (socket) {
+        socket.join("tie-breaker");
+        console.log(`✅ Host ${"host"} bergabung ke room ${"tie-breaker"}`);
       } else {
-        console.log(`⚠️ Tidak bisa menemukan socket untuk tim ${team.name}`);
+        console.log(
+          `⚠️ Socket ${socketId} tidak ditemukan untuk Host ${"host"}`
+        );
       }
-    });
+    } else {
+      console.log(`⚠️ Host ${"host"} belum terdaftar`);
+    }
+
+    if (top5team != null) {
+      top5team.forEach((team) => {
+        let socketId = getSocketIdByTeam(team.name);
+        if (socketId) {
+          console.log(`✅ ${team.name} (${socketId}) masuk tie-breaker`);
+          let socket = io.sockets.sockets.get(socketId);
+          if (socket) {
+            socket.join("tie-breaker");
+          } else {
+            console.log(
+              `⚠️ Socket ${socketId} tidak ditemukan untuk tim ${team.name}`
+            );
+          }
+        } else {
+          console.log(`⚠️ Tidak bisa menemukan socket untuk tim ${team.name}`);
+        }
+      });
+    }
+
 
     let clients = io.sockets.adapter.rooms.get("tie-breaker");
-    console.log("👥 Clients dalam room tie-breaker:", clients ? [...clients] : "Tidak ada");
+    console.log(
+      "👥 Clients dalam room tie-breaker:",
+      clients ? [...clients] : "Tidak ada"
+    );
 
     io.to("tie-breaker").emit("TiebreakerStarted");
 
@@ -242,34 +277,36 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("updatepoint",
+    ({ teamName, correct, timeTaken, maxTime, point }) => {
+      if (!users[teamName]) {
+        users[teamName] = { point: 0 };
+      }
 
-  socket.on("updatepoint", ({ teamName, correct, timeTaken, maxTime, point }) => {
-    if (!users[teamName]) {
-      users[teamName] = { point: 0 };
+      if (isNaN(users[teamName].point)) {
+        users[teamName].point = 0; // Pastikan nilai awal adalah angka
+      }
+
+      // 🛠 **Langsung gunakan point dari client**
+      let totalPoint = point;
+
+      console.log(
+        `Tim: ${teamName}, Correct: ${correct}, Time Taken: ${timeTaken}, Max Time: ${maxTime}, Total Point: ${totalPoint}`
+      );
+
+      // 🛠 **Update point team dengan nilai dari client**
+      users[teamName].point = totalPoint;
+
+      console.log(
+        `Poin tim ${teamName} diperbarui menjadi: ${users[teamName].point}`
+      );
+
+      updateData(users);
+
+      // Emit update ke semua client
+      io.to("tie-breaker").emit("updateTeams", users);
     }
-
-    if (isNaN(users[teamName].point)) {
-      users[teamName].point = 0; // Pastikan nilai awal adalah angka
-    }
-
-    // 🛠 **Langsung gunakan point dari client**
-    let totalPoint = point;
-
-    console.log(
-      `Tim: ${teamName}, Correct: ${correct}, Time Taken: ${timeTaken}, Max Time: ${maxTime}, Total Point: ${totalPoint}`
-    );
-
-    // 🛠 **Update point team dengan nilai dari client**
-    users[teamName].point = totalPoint;
-
-    console.log(`Poin tim ${teamName} diperbarui menjadi: ${users[teamName].point}`);
-
-    updateData(users)
-
-    // Emit update ke semua client
-    io.emit("updateTeams", users);
-  });
-
+  );
 
   socket.on("timeUp", ({ questionId, teamName }) => {
     console.log(
@@ -289,6 +326,37 @@ io.on("connection", (socket) => {
     socket.emit("disableOptions", { teamName });
   });
 
+  socket.on("resetVotestie", () => {
+    votesTie = {}; // Reset votes di server
+    io.emit("updateVotesTie", votesTie);
+    io.emit("totalVotestie", 0);
+  });
+
+  socket.on("voteTie", ({ teamName, option }) => {
+    // Tambahkan atau perbarui jumlah vote
+    votesTie[option] = (votesTie[option] || 0) + 1;
+
+    // Hitung total vote dari semua opsi
+    const totalvotesTie = Object.values(votesTie).reduce(
+      (acc, curr) => acc + curr,
+      0
+    );
+
+    // Kirim pembaruan jumlah vote ke semua client
+    io.emit("updateVotesTie", votesTie);
+    io.emit("totalVotestie", totalvotesTie); // Kirim total vote juga
+  });
+
+  socket.on("switchTieBreaker", (mode) => {
+    if (mode === "questionTieBreaker") {
+      io.emit("showQuestionTieBreaker");
+    } else if (mode === "leaderboardTieBreaker") {
+      io.emit("showLeaderboardTieBreaker");
+    }
+  });
+
+ 
+
   // end tiebreaker question
 
   socket.on("resetGame", () => {
@@ -298,9 +366,9 @@ io.on("connection", (socket) => {
     votes = {};
     teamNames.clear();
 
-    users = {}
+    users = {};
 
-    updateData(users)
+    updateData(users);
 
     // Kirim event pembaruan ke semua klien
     io.emit("gameReset", { message: "Game telah di-reset!" });
@@ -324,13 +392,12 @@ io.on("connection", (socket) => {
   });
 });
 
-
 const updateData = (data) => {
-  fs.writeFileSync('data.json', JSON.stringify(data, null, 4), 'utf8');
-}
+  fs.writeFileSync("data.json", JSON.stringify(data, null, 4), "utf8");
+};
 
 // Jalankan server
 server.listen(PORT, () => {
-  console.log(`Server berjalan di https://localhost:${PORT}`);
-  // console.log(`Server berjalan di http://192.168.88.116:${PORT}`);
+  // console.log(`Server berjalan di https://localhost:${PORT}`);
+  console.log(`Server berjalan di http://192.168.88.116:${PORT}`);
 });
