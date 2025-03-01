@@ -38,7 +38,7 @@
           <div id="options"></div>
         </div>
       </div>
-      <div class="fund mt-3 d-flex justify-content-center" style="display: none;">
+      <div class="fund mt-3 justify-content-center" style="display: none">
         <h3 class="text-white">The Team Has Answered</h3>
         <h2 class="fund-box" id="total-votes">0</h2>
       </div>
@@ -174,7 +174,7 @@
   let votes = {};
 
   socket.on("questioninLeaderboard", (data) => {
-    document.querySelector(".fund").style.display = "block";
+    document.querySelector(".fund").style.display = "flex";
     votes = {}; // Reset votes di frontend
     document.getElementById("total-votes").innerText = "0"; // Reset total votes tampilan
     document.querySelector(".wait").style.display = "none";
