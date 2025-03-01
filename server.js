@@ -135,6 +135,14 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("switchMode", (mode) => {
+    if (mode === "question") {
+      io.emit("showQuestion");
+    } else if (mode === "leaderboard") {
+      io.emit("showLeaderboard");
+    }
+  });
+
   socket.on("resetVotes", () => {
     votes = {}; // Reset votes di server
     io.emit("updateVotes", votes);
@@ -323,6 +331,6 @@ const updateData = (data) => {
 
 // Jalankan server
 server.listen(PORT, () => {
-  console.log(`Server berjalan di https://localhost:${PORT}`);
-  // console.log(`Server berjalan di http://192.168.88.116:${PORT}`);
+  // console.log(`Server berjalan di https://localhost:${PORT}`);
+  console.log(`Server berjalan di http://192.168.88.116:${PORT}`);
 });

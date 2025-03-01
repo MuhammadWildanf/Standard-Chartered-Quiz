@@ -1,7 +1,7 @@
 <%- include('../partials/master/header') %>
 <main>
   <div class="container d-flex flex-column align-items-center mt-5 gap-3">
-    <img src="/assets/GetreadyMaster1.svg" alt="" class="img-fluid"/>
+    <img src="/assets/GetreadyMaster1.svg" alt="" class="img-fluid" />
     <!-- <h1 class="text-white">Get Ready for Portfolio Game</h1> -->
     <!-- <p class="text-white">Wait until all participants are ready</p> -->
     <div class="d-flex justify-content-start align-items-start gap-3">
@@ -27,7 +27,7 @@
         style="border-radius: 50px"
         onclick="resetGame()"
       >
-        reset Game
+        Reset Game
       </button>
       <button
         type="button"
@@ -46,6 +46,14 @@
         Next Question
       </button>
     </div>
+    <div class="col-md-12 d-flex flex-wrap justify-content-center gap-2 mt-3">
+      <button type="button" class="btn btn-primary SwitchLeaderboard">
+        Switch Leaderboard
+      </button>
+      <button type="button" class="btn btn-primary SwitchQuestion">
+        Switch Question
+      </button>
+    </div>
     <div class="w-75 mt-3">
       <h2 class="text-center text-white">Team Lists</h2>
       <p class="total-join text-white text-center fs-4">
@@ -60,8 +68,8 @@
   let currentIndex = 0;
   let tieBreakerIndex = 0;
 
-    const socket = io("wss://scpvbportfoliogame.com/", {
-    // const socket = io("http://192.168.88.116:3000", {
+  // const socket = io("wss://scpvbportfoliogame.com/", {
+  const socket = io("http://192.168.88.116:3000", {
     transports: ["websocket"],
     query: {
       userId: "admin123", // ID tetap
@@ -102,6 +110,14 @@
     socket.emit("getQuestion", idx);
     socket.emit("getQuestionInleaderboard", idx);
   };
+
+  document.querySelector(".SwitchQuestion").addEventListener("click", () => {
+    socket.emit("switchMode", "question"); // Kirim sinyal ke server untuk menampilkan question
+  });
+
+  document.querySelector(".SwitchLeaderboard").addEventListener("click", () => {
+    socket.emit("switchMode", "leaderboard"); // Kirim sinyal ke server untuk menampilkan leaderboard
+  });
 
   function animateCount(element, start, end, duration) {
     let range = end - start;

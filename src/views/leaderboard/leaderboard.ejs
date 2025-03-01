@@ -108,8 +108,8 @@
     seatContainer.lastChild.appendChild(seat);
   }
 
-  const socket = io("wss://scpvbportfoliogame.com/", {
-  // const socket = io("http://192.168.88.116:3000", {
+  // const socket = io("wss://scpvbportfoliogame.com/", {
+  const socket = io("http://192.168.88.116:3000", {
     transports: ["websocket"],
     query: {
       userId: "host", // ID tetap
@@ -211,6 +211,16 @@
   });
 
   socket.on("endinLeaderboard", () => {
+    document.querySelector(".quiz").style.display = "none";
+    document.querySelector(".leaderboard").style.display = "block";
+  });
+
+  socket.on("showQuestion", () => {
+    document.querySelector(".quiz").style.display = "block";
+    document.querySelector(".leaderboard").style.display = "none";
+  });
+
+  socket.on("showLeaderboard", () => {
     document.querySelector(".quiz").style.display = "none";
     document.querySelector(".leaderboard").style.display = "block";
   });
