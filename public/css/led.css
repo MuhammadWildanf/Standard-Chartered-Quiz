@@ -2,7 +2,7 @@
   body {
     display: flex;
     flex-direction: column;
-    max-height: 100vh;
+    min-height: 100vh;
     margin: 0;
     background: linear-gradient(90deg, #2C3A85 0%, #0061C5 100%)
   }
@@ -66,23 +66,35 @@
 
   .fund {
     display: flex;
-    flex-direction: column; /* Susun elemen secara vertikal */
-    align-items: center; /* Pusatkan horizontal */
-    gap: 8px; /* Beri jarak antara teks dan fund-box */
+    flex-direction: column;
+    /* Susun elemen secara vertikal */
+    align-items: center;
+    /* Pusatkan horizontal */
+    gap: 8px;
+    /* Beri jarak antara teks dan fund-box */
   }
-  
+
   .fund-box {
-    background-color: #38D200; /* Warna hijau */
-    color: white; /* Teks putih */
-    width: 189.1px; /* Lebar */
-    height: 36px; /* Tinggi */
+    background-color: #38D200;
+    /* Warna hijau */
+    color: white;
+    /* Teks putih */
+    width: 189.1px;
+    /* Lebar */
+    height: 36px;
+    /* Tinggi */
     display: flex;
-    justify-content: center; /* Pusatkan horizontal */
-    align-items: center; /* Pusatkan vertikal */
-    border-radius: 20px; /* Sudut melengkung */
-    font-size: 18px; /* Ukuran teks */
+    justify-content: center;
+    /* Pusatkan horizontal */
+    align-items: center;
+    /* Pusatkan vertikal */
+    border-radius: 20px;
+    /* Sudut melengkung */
+    font-size: 18px;
+    /* Ukuran teks */
     font-weight: bold;
-    text-align: center; /* Pastikan teks rata tengah */
+    text-align: center;
+    /* Pastikan teks rata tengah */
   }
 
   .seat-box {
@@ -91,4 +103,31 @@
     align-items: center;
     justify-content: center;
     transition: background-color 0.3s ease-in-out;
+  }
+
+  .option-container {
+    width: 100%;
+    max-width: 200px;
+    /* Sesuaikan ukuran container */
+  }
+
+  .option-container img {
+    width: 100%;
+    max-width: 180px;
+    /* Batasi ukuran gambar */
+  }
+
+  .option-container button {
+    width: 100%;
+    max-width: 180px;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .vote-count {
+    background-color: #38D200; /* Warna hijau sesuai permintaan */
+    color: white;
+    border-radius: 30px;
+    border: none;
+    margin-top: 5px;
   }

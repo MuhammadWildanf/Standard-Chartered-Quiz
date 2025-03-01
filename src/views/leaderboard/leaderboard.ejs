@@ -4,8 +4,7 @@
     <section class="wait">
       <div class="row">
         <div class="col-md-7">
-          <img src="/assets/getreadycolor.png" alt="" class="img-fluid">
-          <!-- <h1 class="text-white">Get Ready for Portfolio Game</h1> -->
+          <img src="/assets/Getreadycolor.svg" alt="" class="img-fluid" />
           <p class="text-white">
             Please scan or type link on the table and enter your Team Name
           </p>
@@ -21,7 +20,7 @@
                   <!-- Mengurangi gutter -->
                   <p class="total-join text-center fs-6 mt-1">
                     <!-- Mengurangi ukuran font -->
-                    <span id="joined-count" class="fw-bold fs-5">0</span> / 30
+                    <span id="joined-count" class="fw-bold fs-5">0</span>
                     Teams Joined
                   </p>
                 </div>
@@ -35,11 +34,11 @@
       <div id="questionIndex" class="text-white"></div>
       <div id="question" class="text-center h2 text-white"></div>
       <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <div id="options"></div>
         </div>
       </div>
-      <div class="fund mt-3" style="display: none">
+      <div class="fund mt-3">
         <h3 class="text-white">The Team Has Answered</h3>
         <h2 class="fund-box" id="total-votes">0</h2>
       </div>
@@ -109,7 +108,8 @@
     seatContainer.lastChild.appendChild(seat);
   }
 
-  const socket = io("wss://scpvbportfoliogame.com/", {
+  // const socket = io("wss://scpvbportfoliogame.com/", {
+  const socket = io("http://192.168.88.116:3000", {
     transports: ["websocket"],
     query: {
       userId: "host", // ID tetap
@@ -134,14 +134,14 @@
     console.log(`${namatim} left`);
 
     fetch("/updatetim", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          teamName: namatim
-        }),
-      })
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        teamName: namatim,
+      }),
+    })
       .then((response) => response.json())
       .then((data) => console.log(data))
       .catch((error) => console.error("Error:", error));
@@ -156,7 +156,7 @@
     document.getElementById("total-votes").innerText = "0"; // Reset total votes tampilan
     document.querySelector(".wait").style.display = "none";
     const questionIndexDiv = document.getElementById("questionIndex");
-    questionIndexDiv.innerText = `(QUESTION : ${data.id})`;
+    questionIndexDiv.innerText = `Scenario : ${data.id}`;
     questionIndexDiv.classList.add("h3", "text-center");
 
     document.getElementById("question").innerText = data.question;
@@ -164,21 +164,37 @@
     optionsDiv.innerHTML = "";
     optionsDiv.classList.add(
       "d-flex",
-      "flex-column",
+      "flex-row",
+      "flex-wrap", // Agar tetap rapi jika opsi terlalu banyak
+      "justify-content-center",
       "gap-3",
-      "align-items-stretch",
       "mt-3"
     );
 
     data.options.forEach((opt) => {
-      const optionbtn = document.createElement("div");
-      optionbtn.innerHTML = `
-       <button class="btn btn-primary w-100 rounded-pill" id="option-${opt.value}">
-      <span>${opt.text}</span>
-      <small id="votes-${opt.value}" class="text-white mt-1">Votes: 0</small>
-    </button>
-      `;
-      optionsDiv.appendChild(optionbtn);
+      const optionContainer = document.createElement("div");
+      optionContainer.classList.add("option-container", "mb-3", "text-center");
+
+      const img = document.createElement("img");
+      img.src = opt.image; // Gunakan URL dari JSON
+      img.alt = opt.text;
+      img.classList.add("img-fluid","bg-white","rounded");
+
+      // Buat tombol opsi
+      const btn = document.createElement("button");
+      btn.innerText = opt.text; // Ambil teks dari objek option
+
+      btn.classList.add("btn", "btn-primary", "w-100");
+
+      const voteCount = document.createElement("button");
+      voteCount.id = `votes-${opt.value}`;
+      voteCount.classList.add("btn", "vote-count", "w-100");
+      voteCount.innerText = "Votes: 0";
+
+      optionContainer.appendChild(img);
+      optionContainer.appendChild(btn);
+      optionContainer.appendChild(voteCount);
+      optionsDiv.appendChild(optionContainer);
     });
     socket.emit("resetVotes");
   });

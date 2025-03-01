@@ -1,10 +1,10 @@
 <%- include('../partials/master/header') %>
 <main>
   <div class="container d-flex flex-column align-items-center mt-5 gap-3">
-    <img src="/assets/getreadycolor.png" alt="" class="img-fluid"/>
-    <!-- <h1 class="text-white">Get Ready for Portfolio Game</h1>
-    <p class="text-white">Wait until all participants are ready</p> -->
-    <div class="d-flex justify-content-center align-items-center gap-3">
+    <img src="/assets/GetreadyMaster1.svg" alt="" class="img-fluid"/>
+    <!-- <h1 class="text-white">Get Ready for Portfolio Game</h1> -->
+    <!-- <p class="text-white">Wait until all participants are ready</p> -->
+    <div class="d-flex justify-content-start align-items-start gap-3">
       <button
         type="button"
         class="btn btn-primary start"
@@ -49,7 +49,7 @@
     <div class="w-75 mt-3">
       <h2 class="text-center text-white">Team Lists</h2>
       <p class="total-join text-white text-center fs-4">
-        <span id="joined-count" class="fw-bold fs-3">0</span> / 30 Teams Joined
+        <span id="joined-count" class="fw-bold fs-3">0</span> Teams Joined
       </p>
       <div id="list-tim" class="row g-3 justify-content-center"></div>
     </div>
@@ -60,7 +60,8 @@
   let currentIndex = 0;
   let tieBreakerIndex = 0;
 
-    const socket = io("wss://scpvbportfoliogame.com/", {
+    // const socket = io("wss://scpvbportfoliogame.com/", {
+    const socket = io("http://192.168.88.116:3000", {
     transports: ["websocket"],
     query: {
       userId: "admin123", // ID tetap

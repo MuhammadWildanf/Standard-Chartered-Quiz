@@ -19,8 +19,8 @@
         </div>
         <div id="questionIndex" class="mt-5"></div>
         <div id="question"></div>
-        <div class="row justify-content-center">
-          <div class="col-md-6">
+        <div class="row d-flex justify-content-center">
+          <div class="col-md-12">
             <div id="options"></div>
           </div>
         </div>
@@ -76,7 +76,8 @@
   ).innerHTML = `<p>Congratulations! You've got</p><br> <h1 style="font-weight: 650; font-size: 50px; color: #38D200;
 "><strong>S${formatter.format(fund)}</strong> </h1><br><p>Initial Balance</p>`;
 
-  const socket = io("wss://scpvbportfoliogame.com/", {
+  // const socket = io("wss://scpvbportfoliogame.com/", {
+  const socket = io("http://192.168.88.116:3000", {
     transports: ["websocket"],
     query: {
       userId: namatim, // ID tetap
@@ -107,7 +108,7 @@
     selectedBtn.classList.remove("btn-secondary");
     selectedBtn.classList.add("btn-light", "text-primary", "border-primary");
 
-    selectedBtn.innerText += ` (${value >= 0 ? "+" : ""}${value * 100}%)`;
+    selectedBtn.innerText += ` (${value >= 0 ? "+" : ""}${value}%)`;
     selectedBtn.classList.add(value >= 0 ? "text-green" : "text-red");
 
     fund += fund * (value / 100);
@@ -137,8 +138,8 @@
     const questionIndexDiv = document.getElementById("questionIndex");
     const questionDiv = document.getElementById("question");
 
-    questionIndexDiv.innerText = `(QUESTION : ${data.id})`;
-    questionIndexDiv.classList.add("h3", "text-center");
+    questionIndexDiv.innerText = `Scenario : ${data.id}`;
+    questionIndexDiv.classList.add("p", "text-center", "font-weight-bold");
 
     questionDiv.innerText = data.question;
     questionDiv.classList.add("h2", "text-center");
@@ -149,22 +150,47 @@
     optionsDiv.innerHTML = "";
     optionsDiv.classList.add(
       "d-flex",
-      "flex-column",
+      "flex-row",
+      "flex-wrap", // Agar tetap rapi jika opsi terlalu banyak
+      "justify-content-center",
       "gap-3",
-      "align-items-center",
       "mt-3"
     );
 
     data.options.forEach((opt, i) => {
+      // Buat container untuk gambar dan tombol
+      const optionContainer = document.createElement("div");
+      // optionContainer.classList.add(
+      //   "d-flex",
+      //   "flex-column",
+      //   "flex-wrap", // Agar tetap rapi jika opsi terlalu banyak
+      //   "justify-content-center",
+      //   "gap-3",
+      //   "mt-3"
+      // );
+      optionContainer.classList.add("option-container", "mb-3", "text-center");
+
+
+      // Buat elemen gambar
+      const img = document.createElement("img");
+      img.src = opt.image; // Gunakan URL dari JSON
+      img.alt = opt.text;
+      img.classList.add("img-fluid");
+
+      // Buat tombol opsi
       const btn = document.createElement("button");
       btn.innerText = opt.text; // Ambil teks dari objek option
-      btn.onclick = () => submitAnswer(opt.value, event);
+      btn.onclick = (event) => submitAnswer(opt.value, event);
 
       // Tambahkan class Bootstrap ke tombol
-      btn.classList.add("btn", "btn-primary", "w-100", "rounded-pill");
+      btn.classList.add("btn", "btn-primary", "w-100");
 
-      // Tambahkan tombol ke dalam optionsDiv
-      optionsDiv.appendChild(btn);
+      // Masukkan gambar dan tombol ke dalam container
+      optionContainer.appendChild(img);
+      optionContainer.appendChild(btn);
+
+      // Masukkan container ke dalam optionsDiv
+      optionsDiv.appendChild(optionContainer);
     });
   });
 
@@ -290,7 +316,6 @@
     startTimer(duration, data.id);
   });
 
-
   const submitTieBreaker = (value, event, correctAnswer) => {
     clearInterval(timerInterval);
 
@@ -336,10 +361,9 @@
       correct: isCorrect,
       timeTaken: maxTime - timeTaken, // Hitung waktu yang digunakan
       maxTime,
-      point
+      point,
     });
-};
-
+  };
 
   socket.on("disableOptions", ({ teamName }) => {
     const optionsDiv = document.getElementById("optionstie");

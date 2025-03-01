@@ -4,27 +4,31 @@
     "question": "Low unemployment, economic stability, steady economic growth ",
     "options": [
       {
-        "text": "Cash",
-        "value": 0.05
+        "text": "Option A",
+        "image": "/assets/question/scenario1/a.svg",
+        "value": 24.7
       },
       {
-        "text": "Global Equities (MXWD Index)",
-        "value": 0.25
+        "text": "Option B",
+        "image": "/assets/question/scenario1/b.svg",
+        "value": 13.7
       },
       {
-        "text": "Global Bonds (LBUSTRUU Index)",
-        "value": 0.04
+        "text": "Option C",
+        "image": "/assets/question/scenario1/c.svg",
+        "value": 13.2
       },
       {
-        "text": "Private Credit (CDLI Index)",
-        "value": 0.09
+        "text": "Option D",
+        "image": "/assets/question/scenario1/d.svg",
+        "value": 5
       },
       {
-        "text": "Private Equity (Private Equity)",
-        "value": 0.18
+        "text": "Option E",
+        "image": "/assets/question/scenario1/e.svg",
+        "value": 3.5
       }
     ],
-    
     "durations": 10
   },
   {
@@ -32,27 +36,31 @@
     "question": "War, Rising Inflation, Geopolitical Uncertainty",
     "options": [
       {
-        "text": "Cash",
-        "value": 0.03
+        "text": "Option A",
+        "image": "/assets/question/scenario1/a.svg",
+        "value": -17.9
       },
       {
-        "text": "Global Equities (MXWD Index)",
-        "value": -0.18
+        "text": "Option B",
+        "image": "/assets/question/scenario1/b.svg",
+        "value": -7.3
       },
       {
-        "text": "Global Bonds (LBUSTRUU Index)",
-        "value": -0.13
+        "text": "Option C",
+        "image": "/assets/question/scenario1/c.svg",
+        "value": 0.8
       },
       {
-        "text": "Private Credit (CDLI Index)",
-        "value": 0.06
+        "text": "Option D",
+        "image": "/assets/question/scenario1/d.svg",
+        "value": 3
       },
       {
-        "text": "Private Equity (Private Equity)",
-        "value": -0.05
+        "text": "Option E",
+        "image": "/assets/question/scenario1/e.svg",
+        "value": -13
       }
     ],
-    
     "durations": 10
   },
   {
@@ -60,27 +68,31 @@
     "question": "Recession, Central Banks are aggressively cutting Interest rates",
     "options": [
       {
-        "text": "Cash",
-        "value": 0.00
+        "text": "Option A",
+        "image": "/assets/question/scenario1/a.svg",
+        "value": 16.9
       },
       {
-        "text": "Global Equities (MXWD Index)",
-        "value": 0.17
+        "text": "Option B",
+        "image": "/assets/question/scenario1/b.svg",
+        "value": 13
       },
       {
-        "text": "Global Bonds (LBUSTRUU Index)",
-        "value": 0.08
+        "text": "Option C",
+        "image": "/assets/question/scenario1/c.svg",
+        "value": 13.8
       },
       {
-        "text": "Private Credit (CDLI Index)",
-        "value": 0.05
+        "text": "Option D",
+        "image": "/assets/question/scenario1/d.svg",
+        "value": 0
       },
       {
-        "text": "Private Equity (Private Equity)",
-        "value": 0.022
+        "text": "Option E",
+        "image": "/assets/question/scenario1/e.svg",
+        "value": 7.5
       }
     ],
-    
     "durations": 10
   },
   {
@@ -88,27 +100,31 @@
     "question": "High Interest Rates,  High Inflation,  Recilient Global Growth",
     "options": [
       {
-        "text": "Cash",
-        "value": 0.02
+        "text": "Option A",
+        "image": "/assets/question/scenario1/a.svg",
+        "value": -21.2
       },
       {
-        "text": "Global Equities (MXWD Index)",
-        "value": -0.21
+        "text": "Option B",
+        "image": "/assets/question/scenario1/b.svg",
+        "value": -4.4
       },
       {
-        "text": "Global Bonds (LBUSTRUU Index)",
-        "value": 0.11
+        "text": "Option C",
+        "image": "/assets/question/scenario1/c.svg",
+        "value": -4
       },
       {
-        "text": "Private Credit (CDLI Index)",
-        "value": 0.06
+        "text": "Option D",
+        "image": "/assets/question/scenario1/d.svg",
+        "value": 2
       },
       {
-        "text": "Private Equity (Private Equity)",
-        "value": -0.14
+        "text": "Option E",
+        "image": "/assets/question/scenario1/e.svg",
+        "value": 11.5
       }
     ],
-    
     "durations": 10
   }
 ]

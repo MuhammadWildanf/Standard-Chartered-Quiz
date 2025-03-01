@@ -21,7 +21,8 @@ const URL = process.env.URL;
 
 const io = new Server(server, {
   cors: {
-    origin: "scpvbportfoliogame.com",
+    origin: "*",
+    // origin: "scpvbportfoliogame.com",
     methods: ["GET", "POST"],
   },
 });
@@ -69,7 +70,7 @@ try {
   console.error("Error reading TieBreakerQuestions:", error);
 }
 
-function getTop5Teams() {
+function getTopTeams() {
   const data = JSON.parse(fs.readFileSync("data.json", 'utf-8'));
   const teamsArray = Object.values(data);
 
@@ -77,7 +78,7 @@ function getTop5Teams() {
   teamsArray.sort((a, b) => b.fund - a.fund);
 
   // Ambil 5 tim teratas 
-  return teamsArray.slice(0, 2); //ganti 5 atau berapapun 
+  return teamsArray.slice(0, 5); //ganti 5 atau berapapun 
 }
 
 function getSocketIdByTeam(teamName) {
@@ -203,7 +204,7 @@ io.on("connection", (socket) => {
   socket.on("startTieBreakerQuiz", () => {
     console.log("Tie breaker question Started!");
 
-    let top5team = getTop5Teams();
+    let top5team = getTopTeams();
 
     top5team.forEach(team => {
       let socketId = getSocketIdByTeam(team.name);
@@ -322,5 +323,6 @@ const updateData = (data) => {
 
 // Jalankan server
 server.listen(PORT, () => {
-  console.log(`Server berjalan di https://localhost:${PORT}`);
+  // console.log(`Server berjalan di https://localhost:${PORT}`);
+  console.log(`Server berjalan di http://192.168.88.116:${PORT}`);
 });
