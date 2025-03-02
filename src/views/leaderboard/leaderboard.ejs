@@ -148,7 +148,7 @@
   };
 
   const socket = io("wss://scpvbportfoliogame.com/", {
-  // const socket = io("http://192.168.88.158:3000", {
+    // const socket = io("http://192.168.88.158:3000", {
     transports: ["websocket"],
     query: {
       userId: "host", // ID tetap
@@ -320,10 +320,10 @@
         } else if (topTeams.has(team.fund)) {
           row.classList.add("top-team"); // Warna untuk top 3
         }
-      }
-
-      if (topTeams.has(team.fund)) {
-        row.classList.add("top-team"); // Warna untuk top 3
+      } else {
+        if (topTeams.has(team.fund)) {
+          row.classList.add("top-team"); // Warna untuk top 3
+        }
       }
 
       row.innerHTML = `
@@ -396,7 +396,6 @@
     const newleaderboard = document.querySelector(".newleaderboard");
 
     changeSection(tieBreakerQuiz, newleaderboard);
-
   });
 
   socket.on("updateTeams", (Teams) => {
