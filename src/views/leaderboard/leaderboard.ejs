@@ -30,7 +30,7 @@
         </div>
       </div>
     </section>
-    <section class="quiz">
+    <section class="quiz" style="display: none">
       <div id="questionIndex" class="text-white"></div>
       <div id="question" class="text-center h2 text-white"></div>
       <div class="row justify-content-center">
@@ -130,8 +130,25 @@
     seatContainer.lastChild.appendChild(seat);
   }
 
-  // const socket = io("wss://scpvbportfoliogame.com/", {
-  const socket = io("http://192.168.88.143:3000", {
+  const changeSection = (from, to) => {
+    gsap.to(from, {
+      duration: 0.5,
+      opacity: 0,
+      scale: 0.9,
+      onComplete: () => {
+        from.style.display = "none"; // Sembunyikan elemen yang lama
+        to.style.display = "block"; // Tampilkan elemen yang baru
+        gsap.fromTo(
+          to,
+          { opacity: 0, scale: 0.9 },
+          { opacity: 1, scale: 1, duration: 0.5 }
+        );
+      },
+    });
+  };
+
+  const socket = io("wss://scpvbportfoliogame.com/", {
+  // const socket = io("http://192.168.88.158:3000", {
     transports: ["websocket"],
     query: {
       userId: "host", // ID tetap
@@ -173,11 +190,18 @@
 
   let votes = {};
 
+  socket.on("quizStarted", () => {
+    console.log("Event quizStarted diterima!");
+    const waitElement = document.querySelector(".wait");
+    const quizElement = document.querySelector(".quiz");
+    changeSection(waitElement, quizElement);
+  });
+
   socket.on("questioninLeaderboard", (data) => {
     document.querySelector(".fund").style.display = "flex";
     votes = {}; // Reset votes di frontend
     document.getElementById("total-votes").innerText = "0"; // Reset total votes tampilan
-    document.querySelector(".wait").style.display = "none";
+    // document.querySelector(".wait").style.display = "none";
     const questionIndexDiv = document.getElementById("questionIndex");
     questionIndexDiv.innerText = `Scenario : ${data.id}`;
     questionIndexDiv.classList.add("h3", "text-center");
@@ -239,8 +263,9 @@
   });
 
   socket.on("endinLeaderboard", () => {
-    document.querySelector(".quiz").style.display = "none";
-    document.querySelector(".leaderboard").style.display = "block";
+    const quizEndElement = document.querySelector(".quiz");
+    const leaderboardElement = document.querySelector(".leaderboard");
+    changeSection(quizEndElement, leaderboardElement);
   });
 
   socket.on("showQuestion", () => {
@@ -321,6 +346,7 @@
     document.querySelector(".leaderboard").style.display = "none";
     document.querySelector(".newleaderboard").style.display = "none";
     document.querySelector(".tieBreakerQuiz").style.display = "block";
+
     const questionTieIndexDiv = document.getElementById("questionIndexTie");
     questionTieIndexDiv.innerText = `(QUESTION : ${data.id})`;
     questionTieIndexDiv.classList.add("h3", "text-center");
@@ -366,8 +392,11 @@
   });
 
   socket.on("endTieinLeaderboard", () => {
-    document.querySelector(".tieBreakerQuiz").style.display = "none";
-    document.querySelector(".newleaderboard").style.display = "block";
+    const tieBreakerQuiz = document.querySelector(".tieBreakerQuiz");
+    const newleaderboard = document.querySelector(".newleaderboard");
+
+    changeSection(tieBreakerQuiz, newleaderboard);
+
   });
 
   socket.on("updateTeams", (Teams) => {

@@ -58,29 +58,14 @@
     currencyDisplay: "symbol",
   });
 
-  // function getCurrentSection() {
-  //   const sections = document.querySelectorAll("section");
-  //   for (let section of sections) {
-  //     if (window.getComputedStyle(section).display !== "none") {
-  //       return section.classList[0]; // Mengembalikan nama class section yang aktif
-  //     }
-  //   }
-  //   return null;
-  // }
-
-  // // Contoh penggunaan
-  // setInterval(() => {
-  //   console.log("Section aktif:", getCurrentSection());
-  // }, 3000); // Mengecek setiap 3 detik
-
   document.getElementById(
     "credit"
   ).innerHTML = `<p style="color: white">Congratulations! You've got</p><br> <h1 style="font-weight: 650; font-size: 50px; color: #38D200;"><strong>S${formatter.format(
     fund
   )}</strong> </h1><br><p style="color: white">Initial Balance</p>`;
 
-  // const socket = io("wss://scpvbportfoliogame.com/", {
-  const socket = io("http://192.168.88.143:3000", {
+  const socket = io("wss://scpvbportfoliogame.com/", {
+  // const socket = io("http://192.168.88.158:3000", {
     transports: ["websocket"],
     query: {
       userId: namatim, // ID tetap
@@ -88,7 +73,22 @@
     },
   });
 
-  console.log("Menunggu event gameReset...");
+  const changeSection = (from, to) => {
+    gsap.to(from, {
+      duration: 0.5,
+      opacity: 0,
+      scale: 0.9,
+      onComplete: () => {
+        from.style.display = "none"; // Sembunyikan elemen yang lama
+        to.style.display = "block"; // Tampilkan elemen yang baru
+        gsap.fromTo(
+          to,
+          { opacity: 0, scale: 0.9 },
+          { opacity: 1, scale: 1, duration: 0.5 }
+        );
+      },
+    });
+  };
 
   socket.on("gameReset", () => {
     setTimeout(() => {
@@ -162,14 +162,6 @@
     data.options.forEach((opt, i) => {
       // Buat container untuk gambar dan tombol
       const optionContainer = document.createElement("div");
-      // optionContainer.classList.add(
-      //   "d-flex",
-      //   "flex-column",
-      //   "flex-wrap", // Agar tetap rapi jika opsi terlalu banyak
-      //   "justify-content-center",
-      //   "gap-3",
-      //   "mt-3"
-      // );
       optionContainer.classList.add("option-container", "mb-3", "text-center");
 
       // Buat elemen gambar
@@ -199,9 +191,7 @@
     const quizElement = document.querySelector(".quiz");
     const endElement = document.querySelector(".end");
     const congratsElement = document.querySelector(".congrats");
-
-    quizElement.style.display = "none";
-    endElement.style.display = "block";
+    changeSection(quizElement, endElement);
 
     congratsElement.classList.add("h2", "text-center", "text-white");
     congratsElement.innerText = `Quiz has ended, your final fund is S${formatter.format(
@@ -213,21 +203,7 @@
     console.log("Event quizStarted diterima!");
     const waitElement = document.querySelector(".wait");
     const quizElement = document.querySelector(".quiz");
-
-    if (waitElement) {
-      console.log("Menyembunyikan wait...");
-      waitElement.classList.remove("d-flex");
-      waitElement.classList.add("d-none");
-    } else {
-      console.log("Elemen .wait tidak ditemukan!");
-    }
-
-    if (quizElement) {
-      console.log("Menampilkan quiz...");
-      quizElement.style.display = "block";
-    } else {
-      console.log("Elemen .quiz tidak ditemukan!");
-    }
+    changeSection(waitElement, quizElement);
   });
 
   // end first quiz
@@ -272,8 +248,9 @@
 
   socket.on("TiebreakerStarted", () => {
     console.log("Event TiebreakerStartedStarted diterima!");
-    document.querySelector(".end").style.display = "none";
-    document.querySelector(".tiebreaker").style.display = "block";
+    const endElement = document.querySelector(".end");
+    const TieBreakerElement = document.querySelector(".tiebreaker");
+    changeSection(endElement, TieBreakerElement);
     console.log("harusnya tetap di Tiebreaker!");
   });
 
@@ -385,9 +362,7 @@
     const quizTieElement = document.querySelector(".tiebreaker");
     const endTieElement = document.querySelector(".endtie");
     const congratsTieElement = document.querySelector(".congratstie");
-
-    quizTieElement.style.display = "none";
-    endTieElement.style.display = "block";
+    changeSection(quizTieElement, endTieElement);
 
     congratsTieElement.classList.add("h2", "text-center", "text-white");
     congratsTieElement.innerText = `Quiz has ended, your final point is ${point}`;

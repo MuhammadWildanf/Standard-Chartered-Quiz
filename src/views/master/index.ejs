@@ -79,8 +79,8 @@
   let tieBreakerIndex = 0;
   let isLeaderboard = false;
 
-  // const socket = io("wss://scpvbportfoliogame.com/", {
-  const socket = io("http://192.168.88.143:3000", {
+  const socket = io("wss://scpvbportfoliogame.com/", {
+  // const socket = io("http://192.168.88.158:3000", {
     transports: ["websocket"],
     query: {
       userId: "admin123", // ID tetap
@@ -239,7 +239,7 @@
     if (joinedTeams < 1) {
       Swal.fire({
         title: "Not enough teams!",
-        text: "At least 30 teams must join to start.",
+        text: "teams must join to start.",
         icon: "error",
       });
       return;
@@ -259,7 +259,7 @@
 
   socket.on("end", () => {
     const questionIndexDiv = document.getElementById("questionIndex");
-    questionIndexDiv.innerText = "Quiz Has ended";
+    questionIndexDiv.innerText = "The quiz has ended";
     const NextQuizElement = document.querySelector(".NextQuiz");
     NextQuizElement.style.display = "block";
 
@@ -272,6 +272,11 @@
 
   socket.on("question", (data) => {
     console.log("question 1", data);
+    const questionIndexDiv = document.getElementById("questionIndex");
+    questionIndexDiv.innerText = `Scenario : ${data.id}`;
+  });
+  socket.on("questiontie", (data) => {
+    console.log("question Tie 1", data);
     const questionIndexDiv = document.getElementById("questionIndex");
     questionIndexDiv.innerText = `Scenario : ${data.id}`;
   });
@@ -295,7 +300,10 @@
   });
 
   socket.on("endtie", () => {
+    const questionIndexDiv = document.getElementById("questionIndex");
+    questionIndexDiv.innerText = "The Quiz Tie Breaker Has ended";
     document.querySelector(".SwitchButtonTie").style.display = "none";
+    document.querySelector(".NextQuestion2").style.display = "none";
   });
 
   const NextQuestion2 = () => {
