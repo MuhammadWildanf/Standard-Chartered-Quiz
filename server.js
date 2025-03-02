@@ -241,6 +241,21 @@ io.on("connection", (socket) => {
       console.log(`⚠️ Host ${"host"} belum terdaftar`);
     }
 
+    const socketAdmin = admins["admin123"]; // Ambil socket ID host
+    if (socketAdmin) {
+      const socket = io.sockets.sockets.get(socketAdmin);
+      if (socket) {
+        socket.join("tie-breaker");
+        console.log(`✅ Admin ${"Admin"} bergabung ke room ${"tie-breaker"}`);
+      } else {
+        console.log(
+          `⚠️ Socket ${socketAdmin} tidak ditemukan untuk Admin ${"Admin"}`
+        );
+      }
+    } else {
+      console.log(`⚠️ Host ${"host"} belum terdaftar`);
+    }
+
     if (top5team != null) {
       top5team.forEach((team) => {
         let socketId = getSocketIdByTeam(team.name);

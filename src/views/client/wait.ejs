@@ -9,7 +9,9 @@
       style="margin-top: -140px"
     >
       <section class="wait text-center">
-        <h2 class="text-white">Welcome, Team <strong><%= namatim %>,</strong></h2>
+        <h2 class="text-white">
+          Welcome, Team <strong><%= namatim %>,</strong>
+        </h2>
         <h2 id="credit"></h2>
       </section>
       <section class="quiz" style="display: none">
@@ -73,11 +75,12 @@
 
   document.getElementById(
     "credit"
-  ).innerHTML = `<p style="color: white">Congratulations! You've got</p><br> <h1 style="font-weight: 650; font-size: 50px; color: #38D200;
-"><strong>S${formatter.format(fund)}</strong> </h1><br><p style="color: white">Initial Balance</p>`;
+  ).innerHTML = `<p style="color: white">Congratulations! You've got</p><br> <h1 style="font-weight: 650; font-size: 50px; color: #38D200;"><strong>S${formatter.format(
+    fund
+  )}</strong> </h1><br><p style="color: white">Initial Balance</p>`;
 
-  const socket = io("wss://scpvbportfoliogame.com/", {
-  // const socket = io("http://192.168.88.116:3000", {
+  // const socket = io("wss://scpvbportfoliogame.com/", {
+  const socket = io("http://192.168.88.143:3000", {
     transports: ["websocket"],
     query: {
       userId: namatim, // ID tetap
@@ -137,11 +140,11 @@
 
     const questionIndexDiv = document.getElementById("questionIndex");
     questionIndexDiv.innerText = `Scenario : ${data.id}`;
-    questionIndexDiv.classList.add("h5", "text-center","text-white");
+    questionIndexDiv.classList.add("h5", "text-center", "text-white");
 
     const questionDiv = document.getElementById("question");
     questionDiv.innerHTML = data.question.split(",").join("<br>");
-    questionDiv.classList.add("h2", "text-center","text-white");
+    questionDiv.classList.add("h2", "text-center", "text-white");
 
     question = data;
 
@@ -169,12 +172,11 @@
       // );
       optionContainer.classList.add("option-container", "mb-3", "text-center");
 
-
       // Buat elemen gambar
       const img = document.createElement("img");
       img.src = opt.image; // Gunakan URL dari JSON
       img.alt = opt.text;
-      img.classList.add("img-fluid","bg-white","rounded");
+      img.classList.add("img-fluid", "bg-white", "rounded");
 
       // Buat tombol opsi
       const btn = document.createElement("button");
@@ -201,8 +203,8 @@
     quizElement.style.display = "none";
     endElement.style.display = "block";
 
-    congratsElement.classList.add("h2", "text-center","text-white");
-    congratsElement.innerText = `Quiz was ended, your final fund is S${formatter.format(
+    congratsElement.classList.add("h2", "text-center", "text-white");
+    congratsElement.innerText = `Quiz has ended, your final fund is S${formatter.format(
       fund
     )}`;
   });
@@ -387,8 +389,8 @@
     quizTieElement.style.display = "none";
     endTieElement.style.display = "block";
 
-    congratsTieElement.classList.add("h2", "text-center","text-white");
-    congratsTieElement.innerText = `Quiz was ended, your final point is ${point}`;
+    congratsTieElement.classList.add("h2", "text-center", "text-white");
+    congratsTieElement.innerText = `Quiz has ended, your final point is ${point}`;
   });
 
   // end tie breaker question

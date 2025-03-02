@@ -130,8 +130,8 @@
     seatContainer.lastChild.appendChild(seat);
   }
 
-  const socket = io("wss://scpvbportfoliogame.com/", {
-  // const socket = io("http://192.168.88.116:3000", {
+  // const socket = io("wss://scpvbportfoliogame.com/", {
+  const socket = io("http://192.168.88.143:3000", {
     transports: ["websocket"],
     query: {
       userId: "host", // ID tetap
@@ -184,7 +184,7 @@
 
     const questionDiv = document.getElementById("question");
     questionDiv.innerHTML = data.question.split(",").join("<br>");
-    questionDiv.classList.add("h2", "text-center","text-white");
+    questionDiv.classList.add("h2", "text-center", "text-white");
 
     question = data;
 
@@ -296,7 +296,7 @@
           row.classList.add("top-team"); // Warna untuk top 3
         }
       }
-      
+
       if (topTeams.has(team.fund)) {
         row.classList.add("top-team"); // Warna untuk top 3
       }
@@ -304,7 +304,7 @@
       row.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${team.name}</td>
-                    <td>${team.fund.toLocaleString("id-ID")}</td>
+                    <td>${formatter.format(team.fund)}</td>
                 `;
       listTim.appendChild(row);
     });
@@ -319,6 +319,7 @@
     votesTie = {}; // Reset votes di frontend
     document.getElementById("total-votesTie").innerText = "0"; // Reset total votes tampilan
     document.querySelector(".leaderboard").style.display = "none";
+    document.querySelector(".newleaderboard").style.display = "none";
     document.querySelector(".tieBreakerQuiz").style.display = "block";
     const questionTieIndexDiv = document.getElementById("questionIndexTie");
     questionTieIndexDiv.innerText = `(QUESTION : ${data.id})`;
