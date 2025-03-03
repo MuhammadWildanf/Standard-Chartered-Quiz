@@ -1,7 +1,7 @@
 <%- include('../partials/led/header') %>
 <main>
-  <div class="container mt-5">
-    <section class="wait">
+  <section class="wait align-items-top justify-content-center">
+    <div class="container">
       <div class="row">
         <div class="col-md-8">
           <img src="/assets/Getreadycolor.svg" alt="" class="img-fluid" />
@@ -29,58 +29,58 @@
           </div>
         </div>
       </div>
-    </section>
-    <section class="quiz" style="display: none">
-      <div id="questionIndex" class="text-white"></div>
-      <div id="question" class="text-center h2 text-white"></div>
-      <div class="row justify-content-center">
-        <div class="col-md-12">
-          <div id="options"></div>
+    </div>
+  </section>
+  <section class="quiz" style="display: none">
+    <div id="questionIndex" class="text-white"></div>
+    <div id="question" class="text-center h2 text-white"></div>
+    <div class="row justify-content-center">
+      <div class="col-md-12">
+        <div id="options"></div>
+      </div>
+    </div>
+    <div class="fund mt-5 justify-content-center" style="display: none">
+      <h3 class="text-white">The Team Has Answered</h3>
+      <h2 class="fund-box" id="total-votes">0</h2>
+    </div>
+  </section>
+  <section class="leaderboard" style="display: none">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <h1 class="text-white text-center">Leaderboard</h1>
+        <div class="table-responsif mt-5">
+          <table class="table">
+            <tbody id="list-tim"></tbody>
+          </table>
         </div>
       </div>
-      <div class="fund mt-3 justify-content-center" style="display: none">
-        <h3 class="text-white">The Team Has Answered</h3>
-        <h2 class="fund-box" id="total-votes">0</h2>
+    </div>
+  </section>
+  <section class="tieBreakerQuiz" style="display: none">
+    <div id="questionIndexTie" class="text-white"></div>
+    <div id="questionTie" class="text-center h2 text-white"></div>
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div id="optionsTie" class="row mt-3"></div>
       </div>
-    </section>
-    <section class="leaderboard" style="display: none">
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <h1 class="text-white">Leaderboard</h1>
-          <div class="table-responsif mt-3">
-            <table class="table">
-              <tbody id="list-tim"></tbody>
-            </table>
-          </div>
+    </div>
+    <div class="fund mt-5">
+      <h3 class="text-white">The Team Has Answered</h3>
+      <h2 class="fund-box text-white" id="total-votesTie">0</h2>
+    </div>
+  </section>
+  <section class="newleaderboard" style="display: none">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <h1 class="text-white text-center">Leaderboard</h1>
+        <div class="table-responsif mt-5">
+          <table class="table">
+            <tbody id="list-tie-breaker"></tbody>
+          </table>
         </div>
       </div>
-    </section>
-    <section class="tieBreakerQuiz" style="display: none">
-      <div id="questionIndexTie" class="text-white"></div>
-      <div id="questionTie" class="text-center h2 text-white"></div>
-      <div class="row justify-content-center">
-        <div class="col-md-6">
-          <div id="optionsTie" class="row mt-3"></div>
-        </div>
-      </div>
-      <div class="fund mt-5">
-        <h3 class="text-white">The Team Has Answered</h3>
-        <h2 class="fund-box text-white" id="total-votesTie">0</h2>
-      </div>
-    </section>
-    <section class="newleaderboard" style="display: none">
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <h1 class="text-white">Leaderboard</h1>
-          <div class="table-responsif mt-3">
-            <table class="table">
-              <tbody id="list-tie-breaker"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
+    </div>
+  </section>
 </main>
 
 <script>
