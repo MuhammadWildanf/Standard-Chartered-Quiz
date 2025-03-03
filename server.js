@@ -219,6 +219,7 @@ io.on("connection", (socket) => {
     } else {
       console.log("endTieinLeaderboard");
       io.emit("endTieinLeaderboard");
+      io.to("tie-breaker").emit("endTieinLeaderboard");
     }
   });
 
