@@ -218,7 +218,7 @@ io.on("connection", (socket) => {
       io.emit("totalVotes", 0); // Reset total votes
     } else {
       console.log("endTieinLeaderboard");
-      io.to("tie-breaker").emit("endTieinLeaderboard");
+      io.emit("endTieinLeaderboard");
     }
   });
 
