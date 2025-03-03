@@ -392,6 +392,8 @@
   });
 
   socket.on("endTieinLeaderboard", () => {
+    console.log("Event endTieinLeaderboard diterima!");
+
     const tieBreakerQuiz = document.querySelector(".tieBreakerQuiz");
     const newleaderboard = document.querySelector(".newleaderboard");
 
