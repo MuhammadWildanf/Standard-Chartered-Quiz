@@ -1,15 +1,15 @@
 <%- include('../partials/led/header') %>
 <main>
-  <div class="container mt-5">
+  <div class="container-fluid d-flex justify-content-center mt-5">
     <section class="wait">
       <div class="row">
-        <div class="col-md-7">
+        <div class="col-lg-6 col-md-10 col-sm-12 text-center">
           <img src="/assets/Getreadycolor.svg" alt="" class="img-fluid" />
           <p class="text-white ms-5">
             Please scan or type link on the table and enter your Team Name
           </p>
         </div>
-        <div class="col-md-5">
+        <div class="col-lg-6 col-md-6 col-sm-12">
           <div class="row">
             <div class="col-md-12">
               <div class="card rounded p-1">
@@ -148,7 +148,7 @@
   };
 
   const socket = io("wss://scpvbportfoliogame.com/", {
-    // const socket = io("http://192.168.88.158:3000", {
+  // const socket = io("http://192.168.88.116:3000", {
     transports: ["websocket"],
     query: {
       userId: "host", // ID tetap
@@ -402,14 +402,33 @@
     const listFinalTim = document.getElementById("list-tie-breaker");
     listFinalTim.innerHTML = "";
     Object.values(Teams)
-      .sort((a, b) => b.fund - a.fund)
+      .map((team) => ({
+        ...team,
+        point: team.point !== undefined ? team.point : 5000, // Atur default 5000 jika undefined
+      }))
+      .sort((a, b) => {
+        if (b.point !== a.point) {
+          return b.point - a.point; // Urutkan berdasarkan point lebih dulu
+        }
+        return b.fund - a.fund; // Jika point sama, urutkan berdasarkan fund
+      })
+      .map((team, index) => ({
+        ...team,
+        status: index < 3 ? "Win the prize" : "Eliminated", // Status baru, tidak menimpa point
+      }))
       .forEach((team, index) => {
         const row = document.createElement("tr");
+        if (index < 3) {
+          row.classList.add("top-team"); // Warna untuk 3 besar
+        } else {
+          row.classList.add("tied-player"); // Warna untuk yang tereliminasi
+        }
         row.innerHTML = `
-          <td>${index + 1}</td>
-          <td>${team.name}</td>
-          <td>${team.point}</td>
-        `;
+      <td>${index + 1}</td>
+      <td>${team.name}</td>
+      <td>${formatter.format(team.fund)}</td>
+      <td>${team.status}</td> 
+    `;
         listFinalTim.appendChild(row);
       });
   });
