@@ -6,6 +6,8 @@
     <h5 class="text-white" id="questionIndex">
       Wait until all participants are ready
     </h5>
+    <h5 class="text-white" id="question"></h5>
+    <h5 class="text-white" id="questiontie"></h5>
     <div class="d-flex justify-content-start align-items-start gap-3">
       <button
         type="button"
@@ -263,6 +265,9 @@
     const NextQuizElement = document.querySelector(".NextQuiz");
     NextQuizElement.style.display = "block";
 
+    const questionDiv = document.getElementById("question");
+    questionDiv.style.display = "none";
+
     const NextQuestionElement = document.querySelector(".NextQuestion");
     NextQuestionElement.style.display = "none";
 
@@ -274,11 +279,21 @@
     console.log("question 1", data);
     const questionIndexDiv = document.getElementById("questionIndex");
     questionIndexDiv.innerText = `Scenario : ${data.id}`;
+
+    const questionDiv = document.getElementById("question");
+    questionDiv.innerHTML = data.question.split(",").join("<br>");
+    questionDiv.classList.add("h2", "text-center", "text-white");
+
   });
+
   socket.on("questiontie", (data) => {
     console.log("question Tie 1", data);
     const questionIndexDiv = document.getElementById("questionIndex");
     questionIndexDiv.innerText = `Scenario : ${data.id}`;
+
+    const questiontieDiv = document.getElementById("questiontie");
+    questiontieDiv.innerText = data.question;
+    questiontieDiv.classList.add("h2", "text-center", "text-white");
   });
 
   // end first quiz
@@ -302,6 +317,8 @@
   socket.on("endtie", () => {
     const questionIndexDiv = document.getElementById("questionIndex");
     questionIndexDiv.innerText = "The Quiz Tie Breaker Has ended";
+    const questionDiv = document.getElementById("questiontie");
+    questionDiv.style.display = "none";
     document.querySelector(".SwitchButtonTie").style.display = "none";
     document.querySelector(".NextQuestion2").style.display = "none";
   });
