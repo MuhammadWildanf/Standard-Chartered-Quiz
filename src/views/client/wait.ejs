@@ -65,7 +65,7 @@
   )}</strong> </h1><br><p style="color: white">Initial Balance</p>`;
 
   const socket = io("wss://scpvbportfoliogame.com/", {
-  // const socket = io("http://192.168.88.116:3000", {
+  // const socket = io("http://192.168.88.160:3000", {
     transports: ["websocket"],
     query: {
       userId: namatim, // ID tetap
@@ -168,7 +168,7 @@
       const img = document.createElement("img");
       img.src = opt.image; // Gunakan URL dari JSON
       img.alt = opt.text;
-      img.classList.add("img-fluid", "bg-white", "rounded");
+      img.classList.add("img-fluid");
 
       // Buat tombol opsi
       const btn = document.createElement("button");

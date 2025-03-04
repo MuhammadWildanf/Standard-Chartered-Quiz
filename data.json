@@ -1,1 +1,47 @@
-{}
+{
+    "FAIZZS": {
+        "id": "pReruBd0hjO1lSnJAABH",
+        "name": "FAIZZS",
+        "fund": 1000000
+    },
+    "CHLOE": {
+        "id": "Uq8jw-3nYvzX70A7AABK",
+        "name": "CHLOE",
+        "fund": 1000000
+    },
+    "Pear": {
+        "id": "K3h1g3J73GkCC4SeAABM",
+        "name": "Pear",
+        "fund": 1000000
+    },
+    "vortrex": {
+        "id": "EuW36MvBTI4H51cKAABP",
+        "name": "vortrex",
+        "fund": 1000000
+    },
+    "Apple": {
+        "id": "PQjgwLG3cXKj83EbAABR",
+        "name": "Apple",
+        "fund": 1000000
+    },
+    "imajiwa": {
+        "id": "K_rfz_kZZANISEhYAABS",
+        "name": "imajiwa",
+        "fund": 1000000
+    },
+    "Grape": {
+        "id": "kroQFjA8B26eGme1AABT",
+        "name": "Grape",
+        "fund": 1000000
+    },
+    "Alpha": {
+        "id": "0NNn1aeLDWnBVf3nAABV",
+        "name": "Alpha",
+        "fund": 1000000
+    },
+    "Beta": {
+        "id": "FW6EOF7gNkamLzVxAABX",
+        "name": "Beta",
+        "fund": 1000000
+    }
+}

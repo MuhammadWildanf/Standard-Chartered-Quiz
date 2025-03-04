@@ -109,7 +109,11 @@
     }
     const topPlayer = teamsArray.filter((team) => topTeams.has(team.fund));
 
-    return { topTeams, tiedPlayers, sortedTeams: teamsArray };
+    return {
+      topTeams,
+      tiedPlayers,
+      sortedTeams: teamsArray
+    };
   }
 
   for (let i = 0; i < maxSeats; i++) {
@@ -139,16 +143,21 @@
         from.style.display = "none"; // Sembunyikan elemen yang lama
         to.style.display = "block"; // Tampilkan elemen yang baru
         gsap.fromTo(
-          to,
-          { opacity: 0, scale: 0.9 },
-          { opacity: 1, scale: 1, duration: 0.5 }
+          to, {
+            opacity: 0,
+            scale: 0.9
+          }, {
+            opacity: 1,
+            scale: 1,
+            duration: 0.5
+          }
         );
       },
     });
   };
 
   const socket = io("wss://scpvbportfoliogame.com/", {
-  // const socket = io("http://192.168.88.116:3000", {
+  // const socket = io("http://192.168.88.160:3000", {
     transports: ["websocket"],
     query: {
       userId: "host", // ID tetap
@@ -173,14 +182,14 @@
     console.log(`${namatim} left`);
 
     fetch("/updatetim", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        teamName: namatim,
-      }),
-    })
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          teamName: namatim,
+        }),
+      })
       .then((response) => response.json())
       .then((data) => console.log(data))
       .catch((error) => console.error("Error:", error));
@@ -230,7 +239,7 @@
       const img = document.createElement("img");
       img.src = opt.image; // Gunakan URL dari JSON
       img.alt = opt.text;
-      img.classList.add("img-fluid", "bg-white", "rounded");
+      img.classList.add("img-fluid");
 
       // Buat tombol opsi
       const btn = document.createElement("button");
@@ -307,7 +316,11 @@
   });
 
   socket.on("updateTeams", (Teams) => {
-    const { topTeams, tiedPlayers, sortedTeams } = getTopTeams(
+    const {
+      topTeams,
+      tiedPlayers,
+      sortedTeams
+    } = getTopTeams(
       Object.values(Teams)
     );
     const listTim = document.getElementById("list-tim");
@@ -333,7 +346,9 @@
                     <td>${team.name}</td>
                     <td>${formatter.format(team.fund)}</td>
                 `;
-      listTim.appendChild(row);
+      if (index < 10) {
+        listTim.appendChild(row);
+      }
     });
   });
 
@@ -442,9 +457,38 @@
   // });
 
   socket.on("updateTeams", (Teams) => {
+    const {
+      topTeams,
+      tiedPlayers,
+      sortedTeams
+    } = getTopTeams(
+      Object.values(Teams)
+    );
+
     const totalWinners = 3; // Jumlah pemenang tetap 3
     const listFinalTim = document.getElementById("list-tie-breaker");
+    let autoWinTeams = [];
+    let eliminatedTeams = [];
     listFinalTim.innerHTML = "";
+
+    sortedTeams.forEach((team) => {
+      // Tentukan class berdasarkan kategori tim
+      if (tiedPlayers != null) {
+        if (tiedPlayers.some((tied) => tied.fund === team.fund)) {
+
+        } else if (topTeams.has(team.fund)) {
+          autoWinTeams.push(team)
+        } else {
+          eliminatedTeams.push(team)
+        }
+      } else {
+        if (topTeams.has(team.fund)) {
+          autoWinTeams.push(team)
+        } else {
+          eliminatedTeams.push(team)
+        }
+      }
+    });
 
     // Tambahkan point default jika tidak ada
     Object.values(Teams).forEach((team) => {
@@ -452,12 +496,6 @@
         team.point = 0;
       }
     });
-
-    // Cari tim dengan fund tertinggi (yang otomatis menang)
-    const maxFund = Math.max(...Object.values(Teams).map((team) => team.fund));
-    const autoWinTeams = Object.values(Teams).filter(
-      (team) => team.fund === maxFund
-    );
 
     // Sisa slot setelah tim auto win
     const remainingSlots = totalWinners - autoWinTeams.length;
@@ -467,12 +505,18 @@
       .filter((team) => team.point > 0)
       .sort((a, b) => {
         if (b.point !== a.point) return b.point - a.point;
-        return b.fund - a.fund;
       });
 
     // Ambil pemenang tie-breaker untuk mengisi sisa slot
     const tieBreakerWinners = tieBreakerTeams.slice(0, remainingSlots);
-    const eliminatedTeams = tieBreakerTeams.slice(remainingSlots);
+    const lostTeams = tieBreakerTeams.slice(remainingSlots).sort((a, b) => {
+      if (a.point !== b.point) return a.point - b.point; 
+    });
+
+    console.log(lostTeams)
+    lostTeams.forEach((Teams) => {
+      eliminatedTeams.unshift(Teams)
+    })
 
     // Gabungkan semua tim dalam urutan yang benar
     const finalSortedTeams = [
@@ -499,7 +543,9 @@
             <td>${status}</td>
         `;
 
-      listFinalTim.appendChild(row);
+      if (index < 10) {
+        listFinalTim.appendChild(row);
+      }
     });
   });
 </script>
