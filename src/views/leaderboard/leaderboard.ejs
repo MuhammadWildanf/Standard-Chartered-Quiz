@@ -269,13 +269,15 @@
   });
 
   socket.on("showQuestion", () => {
-    document.querySelector(".quiz").style.display = "block";
-    document.querySelector(".leaderboard").style.display = "none";
+    const quizEndElement = document.querySelector(".quiz");
+    const leaderboardElement = document.querySelector(".leaderboard");
+    changeSection(leaderboardElement, quizEndElement);
   });
 
   socket.on("showLeaderboard", () => {
-    document.querySelector(".quiz").style.display = "none";
-    document.querySelector(".leaderboard").style.display = "block";
+    const quizEndElement = document.querySelector(".quiz");
+    const leaderboardElement = document.querySelector(".leaderboard");
+    changeSection(quizEndElement, leaderboardElement);
   });
 
   socket.on("updateTeams", (Teams) => {
@@ -344,8 +346,10 @@
     votesTie = {}; // Reset votes di frontend
     document.getElementById("total-votesTie").innerText = "0"; // Reset total votes tampilan
     document.querySelector(".leaderboard").style.display = "none";
-    document.querySelector(".newleaderboard").style.display = "none";
-    document.querySelector(".tieBreakerQuiz").style.display = "block";
+    const tieBreakerQuiz = document.querySelector(".tieBreakerQuiz");
+    const newleaderboard = document.querySelector(".newleaderboard");
+
+    changeSection(newleaderboard, tieBreakerQuiz);
 
     const questionTieIndexDiv = document.getElementById("questionIndexTie");
     questionTieIndexDiv.innerText = `(QUESTION : ${data.id})`;
@@ -382,18 +386,20 @@
   });
 
   socket.on("showQuestionTieBreaker", () => {
-    document.querySelector(".tieBreakerQuiz").style.display = "block";
-    document.querySelector(".newleaderboard").style.display = "none";
+    const tieBreakerQuiz = document.querySelector(".tieBreakerQuiz");
+    const newleaderboard = document.querySelector(".newleaderboard");
+
+    changeSection(newleaderboard, tieBreakerQuiz);
   });
 
   socket.on("showLeaderboardTieBreaker", () => {
-    document.querySelector(".tieBreakerQuiz").style.display = "none";
-    document.querySelector(".newleaderboard").style.display = "block";
+    const tieBreakerQuiz = document.querySelector(".tieBreakerQuiz");
+    const newleaderboard = document.querySelector(".newleaderboard");
+
+    changeSection(tieBreakerQuiz, newleaderboard);
   });
 
   socket.on("endTieinLeaderboard", () => {
-    console.log("Event endTieinLeaderboard diterima!");
-
     const tieBreakerQuiz = document.querySelector(".tieBreakerQuiz");
     const newleaderboard = document.querySelector(".newleaderboard");
 
@@ -406,7 +412,7 @@
     Object.values(Teams)
       .map((team) => ({
         ...team,
-        point: team.point !== undefined ? team.point : 5000, // Atur default 5000 jika undefined
+        point: team.point !== undefined ? team.point : 0, // Atur default 5000 jika undefined
       }))
       .sort((a, b) => {
         if (b.point !== a.point) {

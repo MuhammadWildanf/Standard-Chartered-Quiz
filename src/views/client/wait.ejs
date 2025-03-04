@@ -309,7 +309,7 @@
     selectedBtn.classList.remove("btn-secondary");
     let isCorrect = value === correctAnswer;
     let maxTime = question.durations || 10; // Gunakan durasi dari JSON
-    let timeTaken = isNaN(timeElapsed) ? maxTime : timeElapsed;
+    let timeTaken = isNaN(timeElapsed) ? 100 : timeElapsed;
 
     if (value === correctAnswer) {
       selectedBtn.classList.add("btn-success"); // Warna hijau jika benar
@@ -322,7 +322,7 @@
     }
 
     console.log(
-      `Jawaban dikirim: ${value}, Jawaban benar: ${correctAnswer}, Poin: ${point}`
+      `Jawaban dikirim: ${value}, Jawaban benar: ${correctAnswer}, Poin: ${point}, waktu menjawab : ${timeTaken}`
     );
 
     // 🛠 **Tambahkan log untuk debugging**

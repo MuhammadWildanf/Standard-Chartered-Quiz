@@ -1,1 +1,27 @@
-{}
+{
+    "BROWN": {
+        "id": "gcmnUZwJBqgabb9eAACj",
+        "name": "BROWN",
+        "fund": 1000000
+    },
+    "BLUE": {
+        "id": "4Tslgys1wYda773YAACn",
+        "name": "BLUE",
+        "fund": 1000000
+    },
+    "BLACK": {
+        "id": "S_MYQPtQCYGzsJClAACo",
+        "name": "BLACK",
+        "fund": 1000000
+    },
+    "PURPLE": {
+        "id": "J06JFN3v82RcbDeVAACq",
+        "name": "PURPLE",
+        "fund": 1000000
+    },
+    "RED": {
+        "id": "5A0RqPS3GRzzHHScAACr",
+        "name": "RED",
+        "fund": 1000000
+    }
+}

@@ -21,8 +21,8 @@ const URL = process.env.URL;
 
 const io = new Server(server, {
   cors: {
-    // origin: "*",
-    origin: "scpvbportfoliogame.com",
+    origin: "*",
+    // origin: "scpvbportfoliogame.com",
     methods: ["GET", "POST"],
   },
 });
@@ -415,6 +415,6 @@ const updateData = (data) => {
 
 // Jalankan server
 server.listen(PORT, () => {
-  console.log(`Server berjalan di https://localhost:${PORT}`);
-  // console.log(`Server berjalan di http://192.168.88.116:${PORT}`);
+  // console.log(`Server berjalan di https://localhost:${PORT}`);
+  console.log(`Server berjalan di http://192.168.88.116:${PORT}`);
 });
