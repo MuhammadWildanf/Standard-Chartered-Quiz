@@ -51,7 +51,7 @@
   .top-team td,
   .top-team th {
     background-color: #0473EA !important;
-    color: black !important;
+    color: white !important;
     font-weight: bold;
     font-size: 18px;
     /* Perbesar font */
@@ -109,7 +109,8 @@
   .vote-count {
     background-color: #38D200;
     /* Warna hijau sesuai permintaan */
-    color: white;
+    color: black;
+    font-weight: bold;
     border-radius: 30px;
     border: none;
     margin-top: 5px;
@@ -117,21 +118,22 @@
 
   .vote-count:hover {
     background-color: #38D200;
-    color: white;
+    color: black;
     /* Warna hijau sesuai permintaan */
   }
 
   .vote-count:active {
     background-color: #38D200;
     /* Warna hijau sesuai permintaan */
-    color: white;
+    color: black;
     /* Warna hijau sesuai permintaan */
   }
 
   .fund-box {
     background-color: #38D200;
     /* Warna hijau */
-    color: white;
+    color: black;
+    font-weight: bold;
     /* Teks putih */
     width: 189.1px;
     /* Lebar */

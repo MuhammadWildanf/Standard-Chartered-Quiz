@@ -21,7 +21,7 @@ const URL = process.env.URL;
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    // origin: "*",
     origin: "scpvbportfoliogame.com",
     methods: ["GET", "POST"],
   },

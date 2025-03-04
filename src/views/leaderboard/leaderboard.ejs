@@ -241,7 +241,7 @@
       const voteCount = document.createElement("button");
       voteCount.id = `votes-${opt.value}`;
       voteCount.classList.add("btn", "vote-count", "w-100");
-      voteCount.innerText = "Votes: 0";
+      voteCount.innerText = "Answer: 0";
 
       optionContainer.appendChild(img);
       optionContainer.appendChild(btn);
@@ -254,7 +254,7 @@
   socket.on("updateVotes", (votes) => {
     Object.entries(votes).forEach(([optionValue, count]) => {
       const voteElem = document.getElementById(`votes-${optionValue}`);
-      if (voteElem) voteElem.innerText = `Votes: ${count}`;
+      if (voteElem) voteElem.innerText = `Answer: ${count}`;
     });
   });
 
@@ -362,7 +362,7 @@
       <div class="card">
         <div class="card-body text-center">
           <h5>${opt.text}</h5>
-          <div id="votestie-${opt.value}" class="mt-2 text-success">Votes: 0</div>
+          <div id="votestie-${opt.value}" class="mt-2 text-success">Answer: 0</div>
         </div>
       </div>`;
       optionsTieDiv.appendChild(optionTieCard);
@@ -373,7 +373,7 @@
   socket.on("updateVotesTie", (votestie) => {
     Object.entries(votestie).forEach(([optionValue, count]) => {
       const voteElem = document.getElementById(`votestie-${optionValue}`);
-      if (voteElem) voteElem.innerText = `Votes: ${count}`;
+      if (voteElem) voteElem.innerText = `Answer: ${count}`;
     });
   });
 
