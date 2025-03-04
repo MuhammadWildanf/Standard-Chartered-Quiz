@@ -31,6 +31,11 @@
     color: white;
   }
 
+  .margin-left{
+    margin-left: 5rem !important;
+    font-size: 30px !important;
+  }
+
   /* Kelas untuk tombol yang dinonaktifkan */
   .disabled {
     background-color: #f0f0f0;

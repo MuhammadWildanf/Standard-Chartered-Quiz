@@ -4,9 +4,9 @@
     <div class="container">
       <div class="row">
         <div class="col-md-8">
-          <img src="/assets/Getreadycolor.svg" alt="" class="img-fluid" />
-          <p class="text-white ms-5">
-            Please scan or type link on the table and enter your Team Name
+          <img src="/assets/led.svg" alt="" class="img-fluid" />
+          <p class="text-white margin-left">
+            Please scan or type link on the table and enter your <b>Team Name</b>
           </p>
         </div>
         <div class="col-md-4">
@@ -406,40 +406,101 @@
     changeSection(tieBreakerQuiz, newleaderboard);
   });
 
+  // socket.on("updateTeams", (Teams) => {
+  //   const { topTeams, tiedPlayers, sortedTeams } = getTopTeams(
+  //     Object.values(Teams)
+  //   );
+  //   const listFinalTim = document.getElementById("list-tie-breaker");
+  //   listFinalTim.innerHTML = "";
+  //   Object.values(Teams)
+  //     .map((team) => ({...team, point: team.point !== undefined ? team.point : 0, }))
+  //     .sort((a, b) => { if (b.point !== a.point) { return b.point - a.point; // Urutkan berdasarkan point lebih dulu
+  //       } return b.fund - a.fund; // Jika point sama, urutkan berdasarkan fund
+  //     })
+  //     .map((team, index) => ({ ...team, status: index < 3 ? "Win the prize" : "Eliminated", // Status baru, tidak menimpa point
+  //     }))
+  //     .forEach((team, index) => {
+  //       const row = document.createElement("tr");
+  //       if (index < 3) {
+  //         row.classList.add("top-team"); // Warna untuk 3 besar
+  //       } else {
+  //         row.classList.add("tied-player"); // Warna untuk yang tereliminasi
+  //       }
+
+  //       row.innerHTML = `
+
+  //     <td>${index + 1}</td>
+  //     <td>${team.name}</td>
+  //     <td>${formatter.format(team.fund)}</td>
+  //     <td>${team.point}</td>
+  //     <td>${team.status}</td>
+
+  //   `;
+
+  //       listFinalTim.appendChild(row);
+  //     });
+  // });
+
   socket.on("updateTeams", (Teams) => {
+    const totalWinners = 3; // Jumlah pemenang tetap 3
     const listFinalTim = document.getElementById("list-tie-breaker");
     listFinalTim.innerHTML = "";
-    Object.values(Teams)
-      .map((team) => ({
-        ...team,
-        point: team.point !== undefined ? team.point : 0, // Atur default 0 jika undefined
-      }))
+
+    // Tambahkan point default jika tidak ada
+    Object.values(Teams).forEach((team) => {
+      if (team.point === undefined) {
+        team.point = 0;
+      }
+    });
+
+    // Cari tim dengan fund tertinggi (yang otomatis menang)
+    const maxFund = Math.max(...Object.values(Teams).map((team) => team.fund));
+    const autoWinTeams = Object.values(Teams).filter(
+      (team) => team.fund === maxFund
+    );
+
+    // Sisa slot setelah tim auto win
+    const remainingSlots = totalWinners - autoWinTeams.length;
+
+    // Tim yang ikut tie-breaker (point > 0), diurutkan berdasarkan point → fund
+    const tieBreakerTeams = Object.values(Teams)
+      .filter((team) => team.point > 0)
       .sort((a, b) => {
-        if (b.point !== a.point) {
-          return b.point - a.point; // Urutkan berdasarkan point lebih dulu
-        }
-        return b.fund - a.fund; // Jika point sama, urutkan berdasarkan fund
-      })
-      .map((team, index) => ({
-        ...team,
-        status: index < 3 ? "Win the prize" : "Eliminated", // Status baru, tidak menimpa point
-      }))
-      .forEach((team, index) => {
-        const row = document.createElement("tr");
-        if (index < 3) {
-          row.classList.add("top-team"); // Warna untuk 3 besar
-        } else {
-          row.classList.add("tied-player"); // Warna untuk yang tereliminasi
-        }
-        row.innerHTML = `
-      <td>${index + 1}</td>
-      <td>${team.name}</td>
-      <td>${formatter.format(team.fund)}</td>
-      <td>${team.point}</td> 
-      <td>${team.status}</td> 
-    `;
-        listFinalTim.appendChild(row);
+        if (b.point !== a.point) return b.point - a.point;
+        return b.fund - a.fund;
       });
+
+    // Ambil pemenang tie-breaker untuk mengisi sisa slot
+    const tieBreakerWinners = tieBreakerTeams.slice(0, remainingSlots);
+    const eliminatedTeams = tieBreakerTeams.slice(remainingSlots);
+
+    // Gabungkan semua tim dalam urutan yang benar
+    const finalSortedTeams = [
+      ...autoWinTeams, // Tim dengan fund tertinggi langsung masuk leaderboard
+      ...tieBreakerWinners, // Tim pemenang tie-breaker
+      ...eliminatedTeams, // Sisanya
+    ];
+
+    // Tampilkan leaderboard
+    finalSortedTeams.forEach((team, index) => {
+      const row = document.createElement("tr");
+
+      // Status "Win the prize" hanya untuk 3 besar
+      const isWinner = [...autoWinTeams, ...tieBreakerWinners].includes(team);
+      const status = isWinner ? "Win the prize" : "Eliminated";
+
+      row.classList.add(isWinner ? "top-team" : "tied-player");
+
+      row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${team.name}</td>
+            <td>${formatter.format(team.fund)}</td>
+            <td>${team.point}</td>
+            <td>${status}</td>
+        `;
+
+      listFinalTim.appendChild(row);
+    });
   });
 </script>
 

@@ -64,8 +64,8 @@
     fund
   )}</strong> </h1><br><p style="color: white">Initial Balance</p>`;
 
-  const socket = io("wss://scpvbportfoliogame.com/", {
-  // const socket = io("http://192.168.88.116:3000", {
+  // const socket = io("wss://scpvbportfoliogame.com/", {
+  const socket = io("http://192.168.88.116:3000", {
     transports: ["websocket"],
     query: {
       userId: namatim, // ID tetap
@@ -313,7 +313,7 @@
 
     if (value === correctAnswer) {
       selectedBtn.classList.add("btn-success"); // Warna hijau jika benar
-      point += 100;
+      point += 500;
       point += Math.round(timeTaken * 0.1);
     } else {
       selectedBtn.classList.add("btn-danger"); // Warna merah jika salah

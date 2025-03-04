@@ -1,47 +1,43 @@
 [
   {
     "id": 1,
-    "question": "From 2005 to end 2022 which was the best performing asset class ?",
+    "question": "Which Private Equality Manager presented at our conference ?",
     "options": [
       {
-        "text": "Global Equities",
-        "value": "Global Equities"
+        "text": "Apollo",
+        "value": "Apollo"
       },
       {
-        "text": "Private Credit",
-        "value": "Private Credit"
+        "text": "KKR",
+        "value": "KKR"
         
       },
       {
-        "text": "Gold",
-        "value": "Gold"
+        "text": "Carlyle",
+        "value": "Carlyle"
       }
     ],
-    "answers": "Private Credit",
+    "answers": "Carlyle",
     "durations": 6000
   },
   {
     "id": 2,
-    "question": "If you were to invest in the Balanced Portfolio option in all 4 period, what do you think the returns will be.",
+    "question": "Which of the managers have the largest foot print in European Private lending ?",
     "options": [
       {
-        "text": "18.2%",
-        "value": "18.2%"
+        "text": "Blackstone",
+        "value": "Blackstone"
       },
       {
-        "text": "13.7%",
-        "value": "13.7%"
+        "text": "Ares",
+        "value": "Ares"
       },
       {
-        "text": "5.3%",
-        "value": "5.3%"
-      },
-      {
-        "text": "-6.7%",
-        "value": "6.7%"
+        "text": "Apollo",
+        "value": "Apollo"
       }
     ],
-    "answers": "13.7%",
+    "answers": "Ares",
     "durations": 6000
   }
 ]
