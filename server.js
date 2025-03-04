@@ -84,8 +84,9 @@ function getTopTeams() {
   const thirdRankers = teamsArray.length >= 3 ? teamsArray[2].fund : null;
 
   const tiedPlayers = teamsArray.filter((team) => team.fund === thirdRankers);
-  console.log(tiedPlayers);
+  console.log(tiedPlayers,'isi tied player');
   if (tiedPlayers.length == 1) {
+  console.log(tiedPlayers,'isi tied player hanya 1 dan');
     tiedPlayers = null;
   }
 
