@@ -412,7 +412,7 @@
     Object.values(Teams)
       .map((team) => ({
         ...team,
-        point: team.point !== undefined ? team.point : 0, // Atur default 5000 jika undefined
+        point: team.point !== undefined ? team.point : 0, // Atur default 0 jika undefined
       }))
       .sort((a, b) => {
         if (b.point !== a.point) {

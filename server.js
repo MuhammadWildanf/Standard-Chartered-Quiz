@@ -21,8 +21,8 @@ const URL = process.env.URL;
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
-    // origin: "scpvbportfoliogame.com",
+    // origin: "*",
+    origin: "scpvbportfoliogame.com",
     methods: ["GET", "POST"],
   },
 });
@@ -83,10 +83,11 @@ function getTopTeams() {
 
   const thirdRankers = teamsArray.length >= 3 ? teamsArray[2].fund : null;
 
-  const tiedPlayers = teamsArray.filter((team) => team.fund === thirdRankers);
+  let tiedPlayers = teamsArray.filter((team) => team.fund === thirdRankers);
   console.log(tiedPlayers,'isi tied player');
   if (tiedPlayers.length == 1) {
-  console.log(tiedPlayers,'isi tied player hanya 1 dan');
+    io.emit("notTie");
+    console.log(tiedPlayers,'isi tied player hanya 1 dan');
     tiedPlayers = null;
   }
 
@@ -415,6 +416,6 @@ const updateData = (data) => {
 
 // Jalankan server
 server.listen(PORT, () => {
-  // console.log(`Server berjalan di https://localhost:${PORT}`);
-  console.log(`Server berjalan di http://192.168.88.116:${PORT}`);
+  console.log(`Server berjalan di https://localhost:${PORT}`);
+  // console.log(`Server berjalan di http://192.168.88.116:${PORT}`);
 });

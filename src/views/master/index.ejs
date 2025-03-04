@@ -300,6 +300,11 @@
 
   //start tiebreaker question
 
+  socket.on('notTie', () => {
+    console.log('menerima No Tie');
+    const NextQuizElement = document.querySelector(".NextQuiz").disabled = true;
+  })
+
   const NextQuestion = () => {
     currentIndex++;
     StartQuestion(currentIndex);
